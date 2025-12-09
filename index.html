@@ -3,36 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MISUSTECH</title>
+    <title>MISUSTECH - PC Gaming</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+
     <!-- Header -->
     <header class="header-container">
         <div class="logo" onclick="window.location.href='index.html'">MISUSTECH</div>
         <div class="search-language-cart">
             <form id="searchForm">
-                <input type="text" placeholder="Cerca un PC" name="search" required>
+                <input type="text" placeholder="Cerca un PC" name="search">
             </form>
             <select id="languageDropdown">
                 <option value="it">Italiano</option>
                 <option value="en">English</option>
             </select>
-            <button id="accountBtn">Account</button>
-            <button id="cartBtn">Carrello</button>
+            <button id="accountBtn" title="Account">👤</button>
+            <button id="cartBtn" title="Carrello">🛒</button>
         </div>
     </header>
 
     <!-- Categories -->
     <nav class="categories">
         <ul>
-            <li><a href="#">Pc Gaming</a></li>
-            <li><a href="#">Offerte</a></li>
-            <li><a href="#">Codici Sconto</a></li>
-            <li><a href="#">Contattaci</a></li>
-            <li><a href="#">Discord</a></li>
+            <li><a href="pcgaming.html">Pc Gaming</a></li>
+            <li><a href="offerte.html">Offerte</a></li>
+            <li><a href="chisiamo.html">Chi siamo</a></li>
+            <li><a href="discord.html">Discord</a></li>
         </ul>
     </nav>
 
@@ -40,24 +39,9 @@
     <main>
         <h1 class="page-title">Best Seller</h1>
         <div class="products" id="productsContainer">
-            <!-- I prodotti verranno caricati qui dinamicamente -->
+            <!-- Prodotti caricati dinamicamente -->
         </div>
     </main>
-
-    <!-- Cart Sidebar -->
-    <aside id="cartSidebar" class="cart-sidebar">
-        <h2 class="cart-title">Carrello</h2>
-        <div id="cartItems">
-            <p>Il carrello è vuoto</p>
-        </div>
-        <div class="cart-total">
-            <p>Totale: € <span id="cartTotal">0</span></p>
-        </div>
-        <div class="cart-buttons">
-            <button id="closeCart">Chiudi</button>
-            <button id="navigateHome">Naviga adesso</button>
-        </div>
-    </aside>
 
     <!-- Footer -->
     <footer>
@@ -66,5 +50,6 @@
 
     <!-- Script -->
     <script src="script.js"></script>
+
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prodotto - MISUSTECH</title>
+    <title>PC Gaming - MISUSTECH</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 </head>
@@ -35,9 +35,29 @@
         </ul>
     </nav>
 
-    <!-- Main: dettaglio prodotto -->
-    <main class="product-detail">
-        <!-- Contenuto caricato da product.js -->
+    <!-- Main -->
+    <main>
+        <h1 class="page-title">PC Gaming</h1>
+        
+        <!-- Filtri -->
+        <div class="filters">
+            <h2>Filtra per categoria</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">Tutti i prodotti</button>
+                <button class="filter-btn" data-category="bestseller">Best Sellers</button>
+                <button class="filter-btn" data-category="pronta-consegna">Pronta Consegna</button>
+                <button class="filter-btn" data-category="rtx5000">Nvidia RTX 5000</button>
+                <button class="filter-btn" data-category="rx9000">Radeon RX 9000</button>
+                <button class="filter-btn" data-category="personalizzati">Personalizzati</button>
+                <button class="filter-btn" data-category="offerte">Offerte Settimanali ❤</button>
+                <button class="filter-btn" data-category="white">White Edition</button>
+                <button class="filter-btn" data-category="console-killer">Console Killer</button>
+            </div>
+        </div>
+        
+        <div class="products" id="productsContainer">
+            <!-- Prodotti caricati dinamicamente -->
+        </div>
     </main>
 
     <!-- Footer -->
@@ -45,9 +65,8 @@
         <p>© 2025 MISUSTECH | Condizioni e Servizi</p>
     </footer>
 
-    <!-- Script - Ordine IMPORTANTE -->
+    <!-- Script -->
     <script src="script.js"></script>
-    <script src="product.js"></script>
 
 </body>
 </html>

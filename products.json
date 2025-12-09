@@ -1,38 +1,106 @@
 [
   {
-    "name": "Prodotto 1",
-    "price": 599,
-    "desc": "PC Gaming con Ryzen 7, 16GB RAM, RTX 4070.",
-    "img": "https://via.placeholder.com/300x200"
+    "name": "Gaming Beast RTX 4070",
+    "price": 799,
+    "desc": "PC Gaming potente con Ryzen 7, 16GB RAM, RTX 4070 per prestazioni eccezionali.",
+    "img": "https://via.placeholder.com/300x200?text=Gaming+Beast+RTX+4070",
+    "components": "Ryzen 7 5700X | 16GB DDR4 | RTX 4070 | SSD 1TB NVMe",
+    "category": "bestseller"
   },
   {
-    "name": "Prodotto 2",
-    "price": 749,
-    "desc": "PC Gaming con Intel i7, 32GB RAM, RTX 4070 Ti.",
-    "img": "https://via.placeholder.com/300x200"
-  },
-  {
-    "name": "Prodotto 3",
-    "price": 899,
-    "desc": "PC Gaming con Ryzen 9, 32GB RAM, RTX 4080.",
-    "img": "https://via.placeholder.com/300x200"
-  },
-  {
-    "name": "Prodotto 4",
-    "price": 499,
-    "desc": "PC Gaming con Intel i5, 16GB RAM, RTX 3060.",
-    "img": "https://via.placeholder.com/300x200"
-  },
-  {
-    "name": "Prodotto 5",
-    "price": 399,
-    "desc": "PC Gaming entry-level con Ryzen 5, 16GB RAM, GTX 1660.",
-    "img": "https://via.placeholder.com/300x200"
-  },
-  {
-    "name": "Prodotto 6",
+    "name": "Ultimate Gaming Station",
     "price": 1099,
-    "desc": "PC Gaming top-tier con Intel i9, 64GB RAM, RTX 4090.",
-    "img": "https://via.placeholder.com/300x200"
+    "discountPrice": 999,
+    "discount": true,
+    "desc": "PC Gaming top di gamma con Intel i7, 32GB RAM, RTX 4070 Ti.",
+    "img": "https://via.placeholder.com/300x200?text=Ultimate+Gaming+Station",
+    "components": "Intel i7-12700K | 32GB DDR5 | RTX 4070 Ti | SSD 2TB NVMe",
+    "category": "offerte"
+  },
+  {
+    "name": "Pro Gamer RTX 4080",
+    "price": 1299,
+    "desc": "Configurazione professionale con Ryzen 9, 32GB RAM, RTX 4080.",
+    "img": "https://via.placeholder.com/300x200?text=Pro+Gamer+RTX+4080",
+    "components": "Ryzen 9 5900X | 32GB DDR4 | RTX 4080 | SSD 2TB NVMe",
+    "category": "pronta-consegna"
+  },
+  {
+    "name": "Budget Gaming Starter",
+    "price": 599,
+    "discountPrice": 549,
+    "discount": true,
+    "desc": "PC Gaming entry-level perfetto per iniziare, con Intel i5, 16GB RAM, RTX 3060.",
+    "img": "https://via.placeholder.com/300x200?text=Budget+Gaming+Starter",
+    "components": "Intel i5-12400F | 16GB DDR4 | RTX 3060 | SSD 512GB",
+    "category": "console-killer"
+  },
+  {
+    "name": "Essential Gaming PC",
+    "price": 499,
+    "desc": "Soluzione economica con Ryzen 5, 16GB RAM, GTX 1660.",
+    "img": "https://via.placeholder.com/300x200?text=Essential+Gaming+PC",
+    "components": "Ryzen 5 5600G | 16GB DDR4 | GTX 1660 | SSD 500GB",
+    "category": "bestseller"
+  },
+  {
+    "name": "Extreme Gaming RTX 4090",
+    "price": 2499,
+    "desc": "Il massimo delle prestazioni: Intel i9, 64GB RAM, RTX 4090.",
+    "img": "https://via.placeholder.com/300x200?text=Extreme+Gaming+RTX+4090",
+    "components": "Intel i9-12900K | 64GB DDR5 | RTX 4090 | SSD 4TB NVMe",
+    "category": "pronta-consegna"
+  },
+  {
+    "name": "White Edition Gaming",
+    "price": 899,
+    "desc": "Design elegante tutto bianco con RGB, Ryzen 7, 16GB RAM, RTX 4060 Ti.",
+    "img": "https://via.placeholder.com/300x200?text=White+Edition+Gaming",
+    "components": "Ryzen 7 5800X | 16GB DDR4 | RTX 4060 Ti | SSD 1TB | Case White RGB",
+    "category": "white"
+  },
+  {
+    "name": "RTX 5000 Series Beast",
+    "price": 1899,
+    "desc": "Nuova generazione con RTX 5070, prestazioni da urlo.",
+    "img": "https://via.placeholder.com/300x200?text=RTX+5000+Series+Beast",
+    "components": "Intel i7-14700K | 32GB DDR5 | RTX 5070 | SSD 2TB NVMe",
+    "category": "rtx5000"
+  },
+  {
+    "name": "Radeon RX 9000 Gaming",
+    "price": 1699,
+    "desc": "Potenza AMD con RX 9070, ideale per gaming in 4K.",
+    "img": "https://via.placeholder.com/300x200?text=Radeon+RX+9000+Gaming",
+    "components": "Ryzen 9 7950X | 32GB DDR5 | RX 9070 | SSD 2TB NVMe",
+    "category": "rx9000"
+  },
+  {
+    "name": "Custom Build Pro",
+    "price": 999,
+    "discountPrice": 899,
+    "discount": true,
+    "desc": "Configurazione personalizzabile, scegli i tuoi componenti!",
+    "img": "https://via.placeholder.com/300x200?text=Custom+Build+Pro",
+    "components": "Configurazione personalizzata a scelta del cliente",
+    "category": "personalizzati"
+  },
+  {
+    "name": "Console Killer Elite",
+    "price": 699,
+    "desc": "Prestazioni superiori alle console next-gen a prezzo accessibile.",
+    "img": "https://via.placeholder.com/300x200?text=Console+Killer+Elite",
+    "components": "Ryzen 5 7600X | 16GB DDR5 | RTX 4060 | SSD 1TB",
+    "category": "console-killer"
+  },
+  {
+    "name": "Weekly Deal Gaming",
+    "price": 849,
+    "discountPrice": 749,
+    "discount": true,
+    "desc": "Offerta della settimana! PC gaming completo con ottimo rapporto qualità-prezzo.",
+    "img": "https://via.placeholder.com/300x200?text=Weekly+Deal+Gaming",
+    "components": "Intel i5-13600K | 16GB DDR5 | RTX 4060 Ti | SSD 1TB",
+    "category": "offerte"
   }
 ]

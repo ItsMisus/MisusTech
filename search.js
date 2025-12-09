@@ -1,87 +1,110 @@
-// ================================
-// Search.js completo MISUSTECH
-// ================================
-
-// Funzione per collegare il form di ricerca
-function initSearchForm() {
-    const searchForm = document.getElementById('searchForm');
-    if(!searchForm) return;
-    const searchInput = searchForm.querySelector('input');
-
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if(!query) return;
-
-        // Salva query su localStorage
-        localStorage.setItem('searchQuery', query.toLowerCase());
-
-        // Reindirizza a risultati
-        window.location.href = 'risultati.html';
-    });
-}
-
-// ================================
-// Collegamento form dopo caricamento header
-// ================================
-fetch('header.html')
-.then(res => res.text())
-.then(data => {
-    document.getElementById('header-placeholder').innerHTML = data;
-
-    // Inizializza il form
-    initSearchForm();
-})
-.catch(err => console.error("Errore nel caricamento header:", err));
-
-// ================================
-// Caricamento prodotti su risultati.html
-// ================================
 document.addEventListener('DOMContentLoaded', () => {
     const productsContainer = document.getElementById('productsContainer');
     if(!productsContainer) return;
 
-    const searchQuery = localStorage.getItem('searchQuery')?.toLowerCase() || "";
+    const searchQuery = sessionStorage.getItem('searchQuery')?.toLowerCase() || "";
+
+    if(!searchQuery) {
+        window.location.href = 'notfound.html';
+        return;
+    }
 
     fetch('products.json')
-    .then(res => res.json())
-    .then(data => {
-        const filtered = data.filter(p =>
-            p.name.toLowerCase().includes(searchQuery) ||
-            p.desc.toLowerCase().includes(searchQuery)
-        );
+        .then(res => res.json())
+        .then(products => {
+            const filtered = products.filter(p =>
+                p.name.toLowerCase().includes(searchQuery) ||
+                p.desc.toLowerCase().includes(searchQuery) ||
+                (p.components && p.components.toLowerCase().includes(searchQuery))
+            );
 
-        if(filtered.length === 0){
-            // Nessun prodotto trovato -> notfound.html
-            window.location.href = 'notfound.html';
-            return;
-        }
+            if(filtered.length === 0){
+                window.location.href = 'notfound.html';
+                return;
+            }
 
-        // Mostra i prodotti filtrati
-        filtered.forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'product';
-            div.dataset.name = p.name;
-            div.dataset.price = p.price;
-            div.dataset.desc = p.desc;
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'product';
+                
+                if(p.discount) {
+                    div.classList.add('discount');
+                }
+                
+                const displayPrice = p.discount ? p.discountPrice : p.price;
+                
+                div.dataset.name = p.name;
+                div.dataset.price = displayPrice;
+                div.dataset.desc = p.desc;
+                div.dataset.img = p.img;
 
-            div.innerHTML = `
-                <img src="${p.img}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p class="product-desc">${p.desc.substring(0,50)}...</p>
-                <button class="add-to-cart">Aggiungi al carrello</button>
-            `;
+                let priceHTML = '';
+                if(p.discount) {
+                    priceHTML = `
+                        <p>
+                            <span class="original-price">€ ${p.price.toFixed(2)}</span>
+                            <span style="color:#9b59b6; font-weight:700; margin:10px 0;">€ ${p.discountPrice.toFixed(2)}</span>
+                        </p>
+                    `;
+                } else {
+                    priceHTML = `<p style="color:#9b59b6; font-weight:700; margin:10px 0;">€ ${p.price.toFixed(2)}</p>`;
+                }
 
-            productsContainer.appendChild(div);
+                div.innerHTML = `
+                    <img src="${p.img}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <p>${p.desc}</p>
+                    ${priceHTML}
+                    <button class="add-to-cart">Aggiungi al carrello</button>
+                `;
 
-            // Aggiungi al carrello
-            div.querySelector('.add-to-cart').addEventListener('click', () => {
-                const existing = cart.find(item => item.name === p.name);
-                if(existing) existing.qty += 1;
-                else cart.push({...p, qty:1});
-                updateCart();
+                div.addEventListener('click', e => {
+                    if(!e.target.classList.contains('add-to-cart')){
+                        window.location.href = `product.html?name=${encodeURIComponent(p.name)}`;
+                    }
+                });
+
+                productsContainer.appendChild(div);
             });
+
+            const addButtons = document.querySelectorAll('.add-to-cart');
+            addButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const productEl = btn.closest('.product');
+                    if(!productEl) return;
+
+                    const name = productEl.dataset.name;
+                    const price = parseFloat(productEl.dataset.price);
+                    const img = productEl.dataset.img;
+                    const desc = productEl.dataset.desc;
+
+                    if(typeof cartObj !== 'undefined'){
+                        const existing = cartObj.cart.find(item => item.name === name);
+                        if(existing){
+                            existing.qty += 1;
+                        } else {
+                            cartObj.cart.push({name, desc, price, img, qty: 1});
+                        }
+                        cartObj.updateCart();
+
+                        const cartSidebar = document.getElementById('cartSidebar');
+                        if(cartSidebar) {
+                            cartSidebar.classList.add('active');
+                        }
+
+                        btn.textContent = '✓ Aggiunto';
+                        btn.style.background = '#27ae60';
+                        setTimeout(() => {
+                            btn.textContent = 'Aggiungi al carrello';
+                            btn.style.background = '';
+                        }, 1500);
+                    }
+                });
+            });
+        })
+        .catch(err => {
+            console.error("Errore caricamento prodotti:", err);
+            window.location.href = 'notfound.html';
         });
-    })
-    .catch(err => console.error("Errore nel caricamento prodotti:", err));
 });

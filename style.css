@@ -1,12 +1,16 @@
-/* Reset base */
+/* ============================================
+   MISUSTECH - STILE COMPLETO AGGIORNATO
+   ============================================ */
+
 * {margin:0; padding:0; box-sizing:border-box;}
+
 body {
     font-family:'Rajdhani', sans-serif;
     background:#121212;
     color:#fff;
 }
 
-/* Header */
+/* ==================== HEADER ==================== */
 .header-container {
     display:flex;
     justify-content:space-between;
@@ -14,25 +18,33 @@ body {
     padding:20px;
     background:#1f1f1f;
     box-shadow:0 5px 15px rgba(0,0,0,0.5);
+    position:relative;
+    z-index:50;
 }
+
 .logo {
     font-family:'Orbitron', sans-serif;
-    font-size:3rem;
+    font-size:2.5rem;
     background: linear-gradient(45deg, #9b59b6, #8e44ad);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow:0 0 10px #8e44ad;
     cursor:pointer;
     transition:0.3s;
-    text-align:center;
 }
-.logo:hover {transform: scale(1.08); text-shadow:0 0 15px #9b59b6;}
+
+.logo:hover {
+    transform: scale(1.08);
+    text-shadow:0 0 15px #9b59b6;
+}
 
 .search-language-cart {
     display:flex;
     align-items:center;
     gap:10px;
+    flex-wrap:wrap;
 }
+
 .search-language-cart input {
     padding:14px 18px;
     border-radius:8px;
@@ -42,8 +54,14 @@ body {
     transition:0.3s;
     background:#222;
     color:#fff;
+    font-family:'Rajdhani', sans-serif;
 }
-.search-language-cart input:focus {outline:none; box-shadow:0 0 10px #9b59b6;}
+
+.search-language-cart input:focus {
+    outline:none;
+    box-shadow:0 0 10px #9b59b6;
+}
+
 .search-language-cart select {
     padding:10px;
     border-radius:8px;
@@ -52,7 +70,9 @@ body {
     color:#fff;
     cursor:pointer;
     font-weight:500;
+    font-family:'Rajdhani', sans-serif;
 }
+
 .search-language-cart button {
     padding:10px 15px;
     border:none;
@@ -62,20 +82,29 @@ body {
     color:#fff;
     font-weight:600;
     transition:0.3s;
+    font-family:'Rajdhani', sans-serif;
+    font-size:1.5rem;
 }
+
 .search-language-cart button:hover {
     background:linear-gradient(45deg,#8e44ad,#9b59b6);
     transform:scale(1.05);
 }
 
-/* Categories */
-.categories {text-align:center; margin-top:20px;}
+/* ==================== CATEGORIE ==================== */
+.categories {
+    text-align:center;
+    margin-top:20px;
+}
+
 .categories ul {
     display:flex;
     justify-content:center;
     gap:30px;
     list-style:none;
+    flex-wrap:wrap;
 }
+
 .categories ul li a {
     text-decoration:none;
     color:#fff;
@@ -86,6 +115,7 @@ body {
     transition:0.3s;
     position:relative;
 }
+
 .categories ul li a::after {
     content:'';
     position:absolute;
@@ -96,9 +126,51 @@ body {
     background:#9b59b6;
     transition:0.3s;
 }
+
 .categories ul li a:hover::after {width:100%;}
 .categories ul li a:hover {color:#fff; transform:scale(1.05);}
 
+/* ==================== FILTRI PC GAMING ==================== */
+.filters {
+    max-width:1200px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+.filters h2 {
+    font-family:'Orbitron', sans-serif;
+    font-size:1.8rem;
+    color:#9b59b6;
+    text-shadow:0 0 5px #8e44ad;
+    margin-bottom:20px;
+}
+
+.filter-buttons {
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    justify-content:center;
+}
+
+.filter-btn {
+    padding:12px 20px;
+    border:2px solid #9b59b6;
+    border-radius:8px;
+    background:transparent;
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+    font-family:'Rajdhani', sans-serif;
+    font-size:1rem;
+    transition:0.3s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background:#9b59b6;
+    transform:scale(1.05);
+}
+
+/* ==================== MAIN CONTENT ==================== */
 main h1, .page-title {
     font-family:'Orbitron', sans-serif;
     font-size:3rem;
@@ -110,14 +182,16 @@ main h1, .page-title {
     text-align:center;
 }
 
-/* Products */
+/* ==================== PRODOTTI GRID ==================== */
 .products {
     display:grid;
     grid-template-columns:repeat(3, 1fr);
     gap:25px;
     max-width:1200px;
     margin:0 auto 50px auto;
+    padding:0 20px;
 }
+
 .product {
     background:#1f1f1f;
     padding:20px;
@@ -125,17 +199,57 @@ main h1, .page-title {
     box-shadow:0 5px 20px rgba(0,0,0,0.6);
     transition:0.3s;
     text-align:center;
+    cursor:pointer;
+    position:relative;
 }
-.product:hover {transform:translateY(-5px); box-shadow:0 15px 35px rgba(155,89,182,0.8);}
-.product img {width:100%; border-radius:12px; margin-bottom:15px;}
+
+.product.discount::before {
+    content:'SCONTO';
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#e74c3c;
+    color:#fff;
+    padding:5px 10px;
+    border-radius:5px;
+    font-weight:700;
+    font-size:0.8rem;
+}
+
+.product:hover {
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(155,89,182,0.8);
+}
+
+.product img {
+    width:100%;
+    border-radius:12px;
+    margin-bottom:15px;
+    height:200px;
+    object-fit:cover;
+}
+
 .product h3 {
     font-family:'Orbitron', sans-serif;
     font-size:1.4rem;
     color:#fff;
     margin-bottom:10px;
     text-shadow:0 0 8px #9b59b6;
-    transition:0.3s;
 }
+
+.product p {
+    color:#ccc;
+    font-size:0.95rem;
+    margin-bottom:10px;
+}
+
+.product .original-price {
+    color:#888;
+    text-decoration:line-through;
+    font-size:0.9rem;
+    margin-right:10px;
+}
+
 .product button {
     padding:10px 15px;
     border:none;
@@ -145,13 +259,318 @@ main h1, .page-title {
     cursor:pointer;
     font-weight:600;
     transition:0.3s;
+    font-family:'Rajdhani', sans-serif;
 }
+
 .product button:hover {
     background:linear-gradient(45deg,#8e44ad,#9b59b6);
     transform:scale(1.05);
 }
 
-/* Cart Sidebar */
+/* ==================== DETTAGLIO PRODOTTO ==================== */
+.product-detail {
+    max-width:1200px;
+    margin:40px auto;
+    padding:0 20px;
+}
+
+.product-detail-main {
+    display:flex;
+    flex-wrap:wrap;
+    gap:40px;
+    background:#1f1f1f;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 25px rgba(155,89,182,0.5);
+}
+
+.product-image {
+    position:relative;
+    flex:1 1 450px;
+}
+
+.product-image img {
+    width:100%;
+    max-width:500px;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.product-rating {
+    margin-top:15px;
+}
+
+.product-rating .star {
+    font-size:1.8rem;
+    color:#444;
+    margin-right:5px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.product-rating .star.filled {
+    color:gold;
+}
+
+.product-rating .star:hover {
+    transform:scale(1.3);
+}
+
+.product-info {
+    flex:1 1 400px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.product-info h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size:2.5rem;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:0 0 10px #8e44ad;
+}
+
+.price {
+    font-size:2rem;
+    font-weight:700;
+    color:#9b59b6;
+}
+
+.product-info p.desc {
+    color:#ccc;
+    font-size:1rem;
+    line-height:1.6;
+}
+
+.product-info p strong {
+    color:#fff;
+}
+
+.quantity-section {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.quantity-section label {
+    color:#fff;
+    font-weight:600;
+}
+
+.quantity-section input {
+    width:70px;
+    padding:8px;
+    border-radius:5px;
+    border:none;
+    background:#222;
+    color:#fff;
+    text-align:center;
+    font-family:'Rajdhani', sans-serif;
+    font-weight:600;
+}
+
+.quantity-section input:focus {
+    outline:none;
+    box-shadow:0 0 8px #9b59b6;
+}
+
+.quantity-section button {
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+    font-family:'Rajdhani', sans-serif;
+}
+
+.quantity-section button:hover {
+    background:linear-gradient(45deg,#8e44ad,#9b59b6);
+    transform:scale(1.05);
+}
+
+/* ==================== RECENSIONI ==================== */
+.reviews-section {
+    margin-top:50px;
+    background:#1f1f1f;
+    padding:30px;
+    border-radius:15px;
+}
+
+.reviews-section h2 {
+    font-family:'Orbitron', sans-serif;
+    font-size:1.8rem;
+    color:#9b59b6;
+    text-shadow:0 0 5px #8e44ad;
+    margin-bottom:20px;
+}
+
+.review-form {
+    background:#222;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:30px;
+}
+
+.review-form input,
+.review-form textarea {
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:8px;
+    background:#333;
+    color:#fff;
+    font-family:'Rajdhani', sans-serif;
+    font-size:1rem;
+}
+
+.review-form input:focus,
+.review-form textarea:focus {
+    outline:none;
+    box-shadow:0 0 8px #9b59b6;
+}
+
+.review-form textarea {
+    min-height:100px;
+    resize:vertical;
+}
+
+.review-form .star-rating {
+    margin-bottom:15px;
+}
+
+.review-form .star-rating span {
+    font-size:2rem;
+    color:#444;
+    cursor:pointer;
+    margin-right:5px;
+    transition:0.2s;
+}
+
+.review-form .star-rating span.selected {
+    color:gold;
+}
+
+.review-form button {
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    font-family:'Rajdhani', sans-serif;
+    transition:0.3s;
+}
+
+.review-form button:hover {
+    background:linear-gradient(45deg,#8e44ad,#9b59b6);
+    transform:scale(1.05);
+}
+
+.reviews-list {
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.review-item {
+    background:#222;
+    padding:20px;
+    border-radius:10px;
+    border-left:4px solid #9b59b6;
+}
+
+.review-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.review-header h4 {
+    color:#9b59b6;
+    font-size:1.2rem;
+}
+
+.review-stars {
+    color:gold;
+    font-size:1.2rem;
+}
+
+.review-text {
+    color:#ccc;
+    line-height:1.6;
+}
+
+.review-date {
+    color:#888;
+    font-size:0.85rem;
+    margin-top:10px;
+}
+
+/* ==================== SUGGERIMENTI PRODOTTI ==================== */
+.also-like {
+    margin-top:60px;
+}
+
+.also-like h2 {
+    font-family:'Orbitron', sans-serif;
+    font-size:1.6rem;
+    color:#9b59b6;
+    text-shadow:0 0 5px #8e44ad;
+    margin-bottom:20px;
+    border-bottom:1px solid #9b59b6;
+    padding-bottom:10px;
+}
+
+.also-products {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.also-product {
+    background:#1f1f1f;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(155,89,182,0.3);
+    text-align:center;
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.also-product:hover {
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(155,89,182,0.5);
+}
+
+.also-product img {
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.also-product h4 {
+    color:#fff;
+    margin-bottom:5px;
+    font-family:'Orbitron', sans-serif;
+}
+
+.also-product p {
+    color:#ccc;
+    font-size:0.95rem;
+}
+
+/* ==================== CART SIDEBAR ==================== */
 .cart-sidebar {
     position:fixed;
     top:0;
@@ -161,18 +580,41 @@ main h1, .page-title {
     background:#1f1f1f;
     padding:25px;
     box-shadow:-5px 0 20px rgba(0,0,0,0.7);
-    transition:0.5s;
-    overflow:auto;
-    z-index:100;
+    transition:right 0.5s ease;
+    overflow-y:auto;
+    z-index:999;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
+    border-left:3px solid #9b59b6;
+    font-family:'Rajdhani', sans-serif;
 }
-.cart-sidebar.active {right:0;}
-.cart-title {font-family:'Orbitron', sans-serif; font-size:2.5rem; color:#9b59b6; text-align:center; margin-bottom:25px; text-shadow:0 0 10px #8e44ad;}
-#cartItems {flex-grow:1;}
 
-/* Cart Item */
+.cart-sidebar.active {
+    right:0;
+}
+
+.cart-title {
+    font-family:'Orbitron', sans-serif;
+    font-size:2rem;
+    color:#9b59b6;
+    text-align:center;
+    margin-bottom:25px;
+    text-shadow:0 0 10px #8e44ad;
+}
+
+#cartItems {
+    flex-grow:1;
+    overflow-y:auto;
+    margin-bottom:20px;
+}
+
+#cartItems > p {
+    text-align:center;
+    color:#aaa;
+    margin-top:30px;
+}
+
 .cart-item {
     display:flex;
     gap:10px;
@@ -180,27 +622,95 @@ main h1, .page-title {
     background:#222;
     padding:10px;
     border-radius:8px;
+    align-items:flex-start;
 }
+
 .cart-item img {
     width:80px;
     height:60px;
     object-fit:cover;
     border-radius:6px;
+    flex-shrink:0;
 }
+
 .cart-item-details {
     flex:1;
 }
-.cart-item-details h4 {margin:0 0 5px 0; font-size:1.1rem;}
-.cart-item-details p {font-size:0.9rem; color:#ccc; margin:2px 0;}
-.cart-item-details span {font-weight:600; color:#9b59b6;}
+
+.cart-item-details h4 {
+    margin:0 0 5px 0;
+    font-size:1rem;
+    color:#fff;
+    font-weight:600;
+}
+
+.cart-item-details p {
+    font-size:0.85rem;
+    color:#ccc;
+    margin:3px 0;
+}
+
+.cart-item-details span {
+    font-weight:600;
+    color:#9b59b6;
+}
+
+.cart-item-quantity {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:8px;
+}
+
+.cart-item-quantity button {
+    background:#9b59b6;
+    border:none;
+    color:#fff;
+    padding:4px 8px;
+    cursor:pointer;
+    border-radius:4px;
+    font-weight:600;
+    transition:0.2s;
+    font-size:0.9rem;
+    font-family:'Rajdhani', sans-serif;
+}
+
+.cart-item-quantity button:hover {
+    background:#8e44ad;
+    transform:scale(1.1);
+}
+
+.cart-item-quantity span {
+    min-width:20px;
+    text-align:center;
+    font-weight:600;
+}
+
+.cart-item-quantity .remove {
+    background:#e74c3c;
+    margin-left:auto;
+}
+
+.cart-item-quantity .remove:hover {
+    background:#c0392b;
+}
+
+.cart-total {
+    padding-top:15px;
+    border-top:2px solid #9b59b6;
+    font-size:1.2rem;
+    text-align:center;
+    font-weight:700;
+    color:#9b59b6;
+    margin-bottom:15px;
+}
 
 .cart-buttons {
     display:flex;
-    justify-content:space-around;
-    margin-top:20px;
-    flex-wrap:wrap;
-    gap:15px;
+    flex-direction:column;
+    gap:10px;
 }
+
 .cart-buttons button {
     padding:12px 20px;
     border:none;
@@ -209,132 +719,369 @@ main h1, .page-title {
     color:#fff;
     cursor:pointer;
     font-weight:700;
-    font-size:1.1rem;
+    font-size:1rem;
     transition:0.3s;
-    flex:1;
-    text-align:center;
+    font-family:'Rajdhani', sans-serif;
 }
+
 .cart-buttons button:hover {
     background:linear-gradient(45deg,#8e44ad,#9b59b6);
     transform:scale(1.05);
 }
 
-/* Footer */
+/* ==================== CONTACT WIDGET ==================== */
+.contact-widget {
+    position:fixed;
+    bottom:30px;
+    right:30px;
+    z-index:100;
+}
+
+.contact-btn {
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    color:#fff;
+    padding:15px 25px;
+    border-radius:50px;
+    border:none;
+    font-family:'Orbitron', sans-serif;
+    font-size:1.1rem;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 5px 20px rgba(155,89,182,0.6);
+    transition:0.3s;
+}
+
+.contact-btn:hover {
+    transform:scale(1.05);
+    box-shadow:0 8px 30px rgba(155,89,182,0.8);
+}
+
+.contact-modal {
+    display:none;
+    position:fixed;
+    bottom:120px;
+    right:30px;
+    width:350px;
+    background:#1f1f1f;
+    border:3px solid #9b59b6;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.8);
+    z-index:101;
+}
+
+.contact-modal.active {
+    display:block;
+    animation:slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.contact-modal h3 {
+    font-family:'Orbitron', sans-serif;
+    color:#9b59b6;
+    font-size:1.5rem;
+    margin-bottom:20px;
+    text-align:center;
+    text-shadow:0 0 10px #8e44ad;
+}
+
+.contact-info {
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.contact-item {
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+    border-left:4px solid #9b59b6;
+}
+
+.contact-item strong {
+    color:#9b59b6;
+    display:block;
+    margin-bottom:5px;
+    font-size:1.1rem;
+}
+
+.contact-item a {
+    color:#fff;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.contact-item a:hover {
+    color:#9b59b6;
+}
+
+/* ==================== NOT FOUND PAGE ==================== */
+.not-found-container {
+    max-width:800px;
+    margin:100px auto;
+    text-align:center;
+    padding:50px 20px;
+    background:#1f1f1f;
+    border-radius:15px;
+    box-shadow:0 10px 40px rgba(155,89,182,0.5);
+}
+
+.not-found-container h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size:4rem;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:0 0 20px #8e44ad;
+    margin-bottom:20px;
+}
+
+.not-found-container p {
+    font-size:1.3rem;
+    color:#ccc;
+    line-height:1.8;
+    margin-bottom:30px;
+}
+
+.not-found-container a {
+    display:inline-block;
+    padding:15px 30px;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    color:#fff;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:1.1rem;
+    transition:0.3s;
+    font-family:'Rajdhani', sans-serif;
+}
+
+.not-found-container a:hover {
+    background:linear-gradient(45deg,#8e44ad,#9b59b6);
+    transform:scale(1.05);
+}
+
+/* ==================== CHI SIAMO / DISCORD / INFO PAGES ==================== */
+.info-page {
+    max-width:900px;
+    margin:50px auto;
+    padding:40px;
+    background:#1f1f1f;
+    border-radius:15px;
+    box-shadow:0 10px 40px rgba(155,89,182,0.5);
+}
+
+.info-page h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size:3rem;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:0 0 20px #8e44ad;
+    margin-bottom:30px;
+    text-align:center;
+}
+
+.info-page h2 {
+    font-family:'Orbitron', sans-serif;
+    color:#9b59b6;
+    font-size:1.8rem;
+    margin:30px 0 15px 0;
+}
+
+.info-page p {
+    color:#ccc;
+    font-size:1.1rem;
+    line-height:1.8;
+    margin-bottom:20px;
+}
+
+.info-page a {
+    color:#9b59b6;
+    text-decoration:none;
+    font-weight:700;
+    transition:0.3s;
+}
+
+.info-page a:hover {
+    color:#8e44ad;
+    text-decoration:underline;
+}
+
+.info-page .cta-button {
+    display:inline-block;
+    margin-top:20px;
+    padding:15px 30px;
+    background:linear-gradient(45deg,#9b59b6,#8e44ad);
+    color:#fff;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:1.1rem;
+    transition:0.3s;
+    font-family:'Rajdhani', sans-serif;
+}
+
+.info-page .cta-button:hover {
+    background:linear-gradient(45deg,#8e44ad,#9b59b6);
+    transform:scale(1.05);
+}
+
+/* ==================== FOOTER ==================== */
 footer {
     text-align:center;
     padding:20px;
     background:#1f1f1f;
     box-shadow:0 -5px 15px rgba(0,0,0,0.5);
     margin-top:40px;
+    border-top:1px solid #9b59b6;
 }
-footer p {color:#aaa; text-shadow:0 0 5px #000;}
 
-/* Responsive */
-@media(max-width:1024px){.products {grid-template-columns:repeat(2,1fr);}}
-@media(max-width:768px){
-    .products {grid-template-columns:1fr;}
-    .search-language-cart {flex-direction:column; align-items:flex-start;}
-    .categories ul {flex-direction:column; gap:15px;}
+footer p {
+    color:#aaa;
+    text-shadow:0 0 5px #000;
 }
-/* Cart Item aggiornato con quantità */
-.cart-item {
-    display:flex;
-    gap:10px;
-    margin-bottom:15px;
-    background:#222;
-    padding:10px;
-    border-radius:8px;
-    align-items:center;
-}
-.cart-item img {width:80px; height:60px; object-fit:cover; border-radius:6px;}
-.cart-item-details {flex:1;}
-.cart-item-details h4 {margin:0 0 5px 0; font-size:1.1rem;}
-.cart-item-details p {font-size:0.9rem; color:#ccc; margin:2px 0;}
-.cart-item-details span {font-weight:600; color:#9b59b6;}
-.cart-item-quantity {
-    display:flex;
-    align-items:center;
-    gap:5px;
-    margin-top:5px;
-}
-.cart-item-quantity button {
-    background:#9b59b6;
-    border:none;
-    color:#fff;
-    padding:2px 8px;
-    cursor:pointer;
-    border-radius:5px;
-}
-.cart-total {
-    margin-top:15px;
-    font-size:1.2rem;
-    text-align:center;
-    font-weight:700;
-}
-/* Smartphone: max 480px */
-@media (max-width: 480px) {
-    /* Header */
-    .header-container {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 15px;
-    }
-    .logo {
-        font-size: 2rem;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .search-language-cart {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-    .search-language-cart input {
-        width: 100%;
-    }
 
-    /* Categories */
-    .categories ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Products grid */
+/* ==================== RESPONSIVE ==================== */
+@media(max-width:1024px){
     .products {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 0 10px;
+        grid-template-columns:repeat(2, 1fr);
     }
-
-    /* Product detail */
+    
     .product-detail-main {
-        flex-direction: column;
-        padding: 20px;
+        flex-direction:column;
+        align-items:center;
+        gap:30px;
     }
+    
     .product-info {
-        width: 100%;
+        width:100%;
     }
+    
     .product-image img {
-        max-width: 100%;
+        max-width:100%;
     }
+}
 
-    /* Sidebar carrello */
+@media(max-width:768px){
+    .products {
+        grid-template-columns:1fr;
+    }
+    
+    .search-language-cart {
+        flex-direction:column;
+        align-items:stretch;
+        width:100%;
+    }
+    
+    .search-language-cart input {
+        width:100%;
+    }
+    
+    .categories ul {
+        flex-direction:column;
+        gap:15px;
+    }
+    
     .cart-sidebar {
-        width: 100%;
-        right: -100%;
-        padding: 20px;
+        width:100%;
+        right:-100%;
     }
+    
+    .contact-modal {
+        width:90%;
+        right:5%;
+    }
+    
+    .filter-buttons {
+        flex-direction:column;
+    }
+}
+
+@media(max-width:480px){
+    .header-container {
+        flex-direction:column;
+        align-items:stretch;
+        padding:15px;
+    }
+    
+    .logo {
+        font-size:2rem;
+        text-align:center;
+        margin-bottom:10px;
+    }
+    
+    .search-language-cart {
+        flex-direction:column;
+        align-items:stretch;
+        gap:8px;
+    }
+    
+    .search-language-cart input {
+        width:100%;
+    }
+    
+    .categories ul {
+        flex-direction:column;
+        gap:10px;
+    }
+    
+    .products {
+        grid-template-columns:1fr;
+        gap:15px;
+        padding:0 10px;
+    }
+    
+    .product-detail-main {
+        flex-direction:column;
+        padding:20px;
+    }
+    
+    .product-info {
+        width:100%;
+    }
+    
+    .product-image img {
+        max-width:100%;
+    }
+    
+    .cart-sidebar {
+        width:100%;
+        right:-100%;
+        padding:20px;
+    }
+    
     .cart-sidebar.active {
-        right: 0;
+        right:0;
     }
-
+    
     .cart-item img {
-        width: 60px;
-        height: 50px;
+        width:60px;
+        height:50px;
     }
-
+    
     .cart-buttons button {
-        font-size: 1rem;
-        padding: 10px;
+        font-size:1rem;
+        padding:10px;
+    }
+    
+    .contact-widget {
+        bottom:20px;
+        right:20px;
+    }
+    
+    .contact-btn {
+        padding:12px 20px;
+        font-size:1rem;
     }
 }

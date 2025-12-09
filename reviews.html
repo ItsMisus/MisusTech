@@ -3,137 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recensioni Prodotto</title>
-    <link rel="stylesheet" href="product.css">
-    <style>
-        .reviews-container {max-width:1200px; margin:40px auto; padding:0 20px;}
-        .reviews-header {display:flex; flex-direction:column; gap:10px; margin-bottom:30px;}
-        .reviews-header h1 {font-family:'Orbitron', sans-serif; font-size:2.2rem; background:linear-gradient(45deg,#9b59b6,#8e44ad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow:0 0 10px #8e44ad;}
-        
-        /* Media stelle */
-        .average-rating {display:flex; align-items:center; gap:10px; font-size:1.2rem; color:#fff; margin-bottom:20px;}
-
-        /* Form per inserire recensione */
-        .review-form {background:#1f1f1f; padding:20px; border-radius:12px; margin-bottom:30px; box-shadow:0 5px 15px rgba(155,89,182,0.3);}
-        .review-form textarea {width:100%; padding:10px; border-radius:8px; border:none; background:#222; color:#fff; resize:none; font-size:1rem; height:100px;}
-        .review-form button {margin-top:10px; padding:10px 20px; border:none; border-radius:8px; background:linear-gradient(45deg,#9b59b6,#8e44ad); color:#fff; font-weight:700; cursor:pointer; transition:0.3s;}
-        .review-form button:hover {background:linear-gradient(45deg,#8e44ad,#9b59b6); transform:scale(1.05);}
-
-        /* Lista recensioni */
-        .reviews-list {display:flex; flex-direction:column; gap:20px;}
-        .review {background:#1f1f1f; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(155,89,182,0.3);}
-        .review-header {display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
-        .review-stars {color:gold; font-size:1.2rem;}
-        .review-date {font-size:0.85rem; color:#aaa;}
-        .review-text {color:#ccc; line-height:1.5;}
-    </style>
+    <title>Recensioni - MISUSTECH</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="header-placeholder"></div>
 
-<script>
-fetch('header.html')
-.then(response => response.text())
-.then(data => {
-    document.getElementById('header-placeholder').innerHTML = data;
-});
-</script>
-
-<!-- Header -->
-<header class="header-container">
-    <div class="logo" onclick="window.location.href='index.html'">MISUSTECH</div>
-    <div class="search-language-cart">
-        <select id="languageDropdown">
-            <option value="it">Italiano</option>
-            <option value="en">English</option>
-        </select>
-        <button id="accountBtn">Account</button>
-        <button id="cartBtn">Carrello</button>
-    </div>
-</header>
-
-<main class="reviews-container">
-    <div class="reviews-header">
-        <h1 id="productName">Recensioni Prodotto</h1>
-        <div class="average-rating">
-            <span id="avgStars">★★★★★</span>
-            <span id="reviewsCount">(0 recensioni)</span>
-        </div>
-    </div>
-
-    <!-- Form per inserire recensione -->
-    <div class="review-form">
-        <textarea id="reviewText" placeholder="Scrivi la tua recensione..."></textarea>
-        <div style="margin-top:10px;">
-            <label>Valutazione: </label>
-            <select id="reviewRating">
-                <option value="5">★★★★★</option>
-                <option value="4">★★★★☆</option>
-                <option value="3">★★★☆☆</option>
-                <option value="2">★★☆☆☆</option>
-                <option value="1">★☆☆☆☆</option>
+    <!-- Header -->
+    <header class="header-container">
+        <div class="logo" onclick="window.location.href='index.html'">MISUSTECH</div>
+        <div class="search-language-cart">
+            <form id="searchForm">
+                <input type="text" placeholder="Cerca un PC" name="search">
+            </form>
+            <select id="languageDropdown">
+                <option value="it">Italiano</option>
+                <option value="en">English</option>
             </select>
+            <button id="accountBtn" title="Account">👤</button>
+            <button id="cartBtn" title="Carrello">🛒</button>
         </div>
-        <button id="submitReview">Invia recensione</button>
-    </div>
+    </header>
 
-    <!-- Lista recensioni -->
-    <div class="reviews-list" id="reviewsList">
-        <!-- Recensioni inserite dagli utenti appariranno qui -->
-    </div>
-</main>
+    <!-- Categories -->
+    <nav class="categories">
+        <ul>
+            <li><a href="pcgaming.html">Pc Gaming</a></li>
+            <li><a href="offerte.html">Offerte</a></li>
+            <li><a href="chisiamo.html">Chi siamo</a></li>
+            <li><a href="discord.html">Discord</a></li>
+        </ul>
+    </nav>
 
-<script>
-    const params = new URLSearchParams(window.location.search);
-    const productName = params.get('name') || "Prodotto Sconosciuto";
-    document.getElementById('productName').textContent = `Recensioni di: ${productName}`;
+    <!-- Main - Caricato dinamicamente -->
+    <main>
+        <!-- Contenuto caricato da reviews.js -->
+    </main>
 
-    const reviewsKey = `reviews_${productName.replace(/\s/g,'_')}`;
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 MISUSTECH | Condizioni e Servizi</p>
+    </footer>
 
-    function loadReviews() {
-        const reviews = JSON.parse(localStorage.getItem(reviewsKey)) || [];
-        displayReviews(reviews);
-    }
-
-    function displayReviews(reviews) {
-        const container = document.getElementById('reviewsList');
-        container.innerHTML = '';
-        reviews.forEach(r => {
-            const div = document.createElement('div');
-            div.className = 'review';
-            div.innerHTML = `
-                <div class="review-header">
-                    <span class="review-stars">${'★'.repeat(r.rating) + '☆'.repeat(5-r.rating)}</span>
-                    <span class="review-date">${r.date}</span>
-                </div>
-                <div class="review-text">${r.text}</div>
-            `;
-            container.appendChild(div);
-        });
-
-        // Aggiorna media stelle
-        const avg = reviews.length ? (reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length).toFixed(1) : 5;
-        document.getElementById('avgStars').textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg));
-        document.getElementById('reviewsCount').textContent = `(${reviews.length} recensioni)`;
-    }
-
-    document.getElementById('submitReview').addEventListener('click', () => {
-        const text = document.getElementById('reviewText').value.trim();
-        const rating = parseInt(document.getElementById('reviewRating').value);
-        if(!text) return alert('Scrivi qualcosa prima di inviare!');
-        const reviews = JSON.parse(localStorage.getItem(reviewsKey)) || [];
-        reviews.unshift({
-            text,
-            rating,
-            date: new Date().toLocaleDateString()
-        });
-        localStorage.setItem(reviewsKey, JSON.stringify(reviews));
-        document.getElementById('reviewText').value = '';
-        displayReviews(reviews);
-    });
-
-    loadReviews();
-</script>
+    <!-- Script -->
+    <script src="script.js"></script>
+    <script src="reviews.js"></script>
 
 </body>
 </html>

@@ -9,38 +9,48 @@
 </head>
 <body>
 
-    <!-- Header e categorie -->
-    <div id="header-placeholder"></div>
-    <script src="script.js"></script>
-    <script src="search.js"></script>
+    <!-- Header -->
+    <header class="header-container">
+        <div class="logo" onclick="window.location.href='index.html'">MISUSTECH</div>
+        <div class="search-language-cart">
+            <form id="searchForm">
+                <input type="text" placeholder="Cerca un PC" name="search">
+            </form>
+            <select id="languageDropdown">
+                <option value="it">Italiano</option>
+                <option value="en">English</option>
+            </select>
+            <button id="accountBtn" title="Account">👤</button>
+            <button id="cartBtn" title="Carrello">🛒</button>
+        </div>
+    </header>
+
+    <!-- Categories -->
+    <nav class="categories">
+        <ul>
+            <li><a href="pcgaming.html">Pc Gaming</a></li>
+            <li><a href="offerte.html">Offerte</a></li>
+            <li><a href="chisiamo.html">Chi siamo</a></li>
+            <li><a href="discord.html">Discord</a></li>
+        </ul>
+    </nav>
 
     <!-- Main -->
     <main>
         <h1 class="page-title">Risultati della ricerca</h1>
         <div class="products" id="productsContainer">
-            <!-- Prodotti filtrati verranno caricati dinamicamente da search.js -->
+            <!-- Prodotti filtrati caricati dinamicamente -->
         </div>
     </main>
-
-    <!-- Cart Sidebar -->
-    <aside id="cartSidebar" class="cart-sidebar">
-        <h2 class="cart-title">Carrello</h2>
-        <div id="cartItems">
-            <p>Il carrello è vuoto</p>
-        </div>
-        <div class="cart-total">
-            <p>Totale: € <span id="cartTotal">0</span></p>
-        </div>
-        <div class="cart-buttons">
-            <button id="closeCart">Chiudi</button>
-            <button id="navigateHome">Naviga adesso</button>
-        </div>
-    </aside>
 
     <!-- Footer -->
     <footer>
         <p>© 2025 MISUSTECH | Condizioni e Servizi</p>
     </footer>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+    <script src="search.js"></script>
 
 </body>
 </html>
