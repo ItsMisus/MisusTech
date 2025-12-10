@@ -1,92 +1,52 @@
-// ========================= CREA CARRELLO DINAMICAMENTE =========================
-function createCart() {
-    const cartSidebar = document.createElement('aside');
-    cartSidebar.id = 'cartSidebar';
-    cartSidebar.className = 'cart-sidebar';
-    cartSidebar.innerHTML = `
-        <h2 class="cart-title">Carrello</h2>
-        <div id="cartItems">
-            <p>Il carrello è vuoto</p>
-        </div>
-        <div class="cart-total">
-            <p>Totale: € <span id="cartTotal">0.00</span></p>
-        </div>
-        <div class="cart-buttons">
-            <button id="closeCart">Chiudi</button>
-            <button id="navigateHome">Continua Shopping</button>
-        </div>
-    `;
-    document.body.appendChild(cartSidebar);
-}
-
-createCart();
-
-// ========================= CONTACT WIDGET - LINK A PAGINA =========================
-function createContactWidget() {
-    const widget = document.createElement('div');
-    widget.className = 'contact-widget';
-    widget.innerHTML = `
-        <a href="contattaci.html" class="contact-btn">CONTATTACI</a>
-    `;
-    document.body.appendChild(widget);
-}
-
-createContactWidget();
-
-// ========================= CART MANAGEMENT =========================
+// ==================== CART MANAGEMENT ====================
 let cartObj = {};
 
 function initCart() {
-    const cartBtn = document.getElementById('cartBtn');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const closeCart = document.getElementById('closeCart');
-    const navigateHome = document.getElementById('navigateHome');
-    
     let cart = [];
     
-    function updateCart(){
+    function updateCart() {
         const cartItems = document.getElementById('cartItems');
         const cartTotalEl = document.getElementById('cartTotal');
-        if(!cartItems || !cartTotalEl) return;
+        if (!cartItems || !cartTotalEl) return;
 
         cartItems.innerHTML = "";
-        if(cart.length === 0){
+        
+        if (cart.length === 0) {
             cartItems.innerHTML = "<p style='text-align:center; color:#aaa;'>Il carrello è vuoto</p>";
         } else {
             cart.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = 'cart-item';
+                div.style.cssText = 'display:flex; gap:10px; margin-bottom:15px; background:#222; padding:10px; border-radius:8px; align-items:flex-start;';
+                
                 div.innerHTML = `
-                    <img src="${item.img}" alt="${item.name}">
-                    <div class="cart-item-details">
-                        <h4>${item.name}</h4>
-                        <p>€ ${item.price.toFixed(2)}</p>
-                        <div class="cart-item-quantity">
-                            <button class="decrease">−</button>
-                            <span>${item.qty}</span>
-                            <button class="increase">+</button>
-                            <button class="remove">✕</button>
+                    <img src="${item.img}" alt="${item.name}" style="width:80px; height:60px; object-fit:cover; border-radius:6px;">
+                    <div style="flex:1;">
+                        <h4 style="margin:0 0 5px 0; font-size:1rem; color:#fff;">${item.name}</h4>
+                        <p style="font-size:0.85rem; color:#ccc; margin:3px 0;">€ ${item.price.toFixed(2)}</p>
+                        <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+                            <button class="decrease" style="background:#9b59b6; border:none; color:#fff; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:600;">−</button>
+                            <span style="min-width:20px; text-align:center; font-weight:600; color:#9b59b6;">${item.qty}</span>
+                            <button class="increase" style="background:#9b59b6; border:none; color:#fff; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:600;">+</button>
+                            <button class="remove" style="background:#e74c3c; border:none; color:#fff; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:600; margin-left:auto;">✕</button>
                         </div>
                     </div>
                 `;
+                
                 cartItems.appendChild(div);
 
-                div.querySelector('.increase').addEventListener('click', (e) => {
-                    e.stopPropagation();
+                div.querySelector('.increase').addEventListener('click', () => {
                     item.qty += 1;
                     updateCart();
                 });
                 
-                div.querySelector('.decrease').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if(item.qty > 1) {
+                div.querySelector('.decrease').addEventListener('click', () => {
+                    if (item.qty > 1) {
                         item.qty -= 1;
                         updateCart();
                     }
                 });
                 
-                div.querySelector('.remove').addEventListener('click', (e) => {
-                    e.stopPropagation();
+                div.querySelector('.remove').addEventListener('click', () => {
                     cart.splice(index, 1);
                     updateCart();
                 });
@@ -98,34 +58,15 @@ function initCart() {
     }
 
     updateCart();
-
-    if(cartBtn) {
-        cartBtn.addEventListener('click', () => {
-            cartSidebar.classList.toggle('active');
-        });
-    }
-    
-    if(closeCart) {
-        closeCart.addEventListener('click', () => {
-            cartSidebar.classList.remove('active');
-        });
-    }
-
-    if(navigateHome) {
-        navigateHome.addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
-    }
-
-    return { cart, updateCart, cartSidebar };
+    return { cart, updateCart };
 }
 
 cartObj = initCart();
 
-// ========================= PRODUCTS LOADING (con PAGINAZIONE) =========================
+// ==================== PRODUCTS LOADING ====================
 document.addEventListener('DOMContentLoaded', () => {
     const productsContainer = document.getElementById('productsContainer');
-    if(!productsContainer) return;
+    if (!productsContainer) return;
 
     const PRODUCTS_PER_PAGE = 12;
     let allProducts = [];
@@ -149,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = 'product';
             
-            if(prod.discount) {
+            if (prod.discount) {
                 div.classList.add('discount');
             }
             
@@ -160,15 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
             div.dataset.category = prod.category || 'all';
 
             let priceHTML = '';
-            if(prod.discount) {
+            if (prod.discount) {
                 priceHTML = `
                     <p>
-                        <span class="original-price">€ ${prod.price.toFixed(2)}</span>
-                        <span style="color:#9b59b6; font-weight:700; margin:10px 0;">€ ${prod.discountPrice.toFixed(2)}</span>
+                        <span style="color:#888; text-decoration:line-through; font-size:0.9rem;">€ ${prod.price.toFixed(2)}</span>
+                        <span style="color:#9b59b6; font-weight:700; margin-left:10px;">€ ${prod.discountPrice.toFixed(2)}</span>
                     </p>
                 `;
             } else {
-                priceHTML = `<p style="color:#9b59b6; font-weight:700; margin:10px 0;">€ ${prod.price.toFixed(2)}</p>`;
+                priceHTML = `<p style="color:#9b59b6; font-weight:700;">€ ${prod.price.toFixed(2)}</p>`;
             }
 
             div.innerHTML = `
@@ -180,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             div.addEventListener('click', e => {
-                if(!e.target.classList.contains('add-to-cart')){
+                if (!e.target.classList.contains('add-to-cart')) {
                     window.location.href = `product.html?name=${encodeURIComponent(prod.name)}`;
                 }
             });
@@ -194,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', e => {
                 e.stopPropagation();
                 const productEl = btn.closest('.product');
-                if(!productEl) return;
+                if (!productEl) return;
 
                 const name = productEl.dataset.name;
                 const price = parseFloat(productEl.dataset.price);
@@ -202,16 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const desc = productEl.dataset.desc;
 
                 const existing = cartObj.cart.find(p => p.name === name);
-                if(existing) {
+                if (existing) {
                     existing.qty += 1;
                 } else {
-                    cartObj.cart.push({name, desc, price, img, qty: 1});
+                    cartObj.cart.push({ name, desc, price, img, qty: 1 });
                 }
                 
                 cartObj.updateCart();
                 
                 const cartSidebar = document.getElementById('cartSidebar');
-                if(cartSidebar) {
+                if (cartSidebar) {
                     cartSidebar.classList.add('active');
                 }
                 
@@ -238,39 +179,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
         
         let paginationDiv = document.querySelector('.pagination');
-        if(!paginationDiv) {
+        if (!paginationDiv) {
             paginationDiv = document.createElement('div');
             paginationDiv.className = 'pagination';
+            paginationDiv.style.cssText = 'display:flex; justify-content:center; align-items:center; gap:20px; margin:40px 0;';
             productsContainer.parentElement.appendChild(paginationDiv);
         }
 
         paginationDiv.innerHTML = '';
 
-        if(totalPages <= 1) return;
+        if (totalPages <= 1) return;
 
-        if(currentPage > 1) {
+        if (currentPage > 1) {
             const prevBtn = document.createElement('button');
-            prevBtn.className = 'pagination-btn prev-btn';
+            prevBtn.className = 'btn-primary';
             prevBtn.innerHTML = '← Indietro';
             prevBtn.addEventListener('click', () => {
                 displayPage(currentPage - 1);
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             paginationDiv.appendChild(prevBtn);
         }
 
         const pageInfo = document.createElement('span');
-        pageInfo.className = 'page-info';
+        pageInfo.style.cssText = 'color:#9b59b6; font-weight:700; font-size:1.1rem;';
         pageInfo.textContent = `Pagina ${currentPage} di ${totalPages}`;
         paginationDiv.appendChild(pageInfo);
 
-        if(currentPage < totalPages) {
+        if (currentPage < totalPages) {
             const nextBtn = document.createElement('button');
-            nextBtn.className = 'pagination-btn next-btn';
+            nextBtn.className = 'btn-primary';
             nextBtn.innerHTML = 'Avanti →';
             nextBtn.addEventListener('click', () => {
                 displayPage(currentPage + 1);
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             paginationDiv.appendChild(nextBtn);
         }
@@ -278,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Esponi funzioni globalmente per i filtri
     window.filterProducts = function(category) {
-        if(category === 'all') {
+        if (category === 'all') {
             filteredProducts = allProducts;
         } else {
             filteredProducts = allProducts.filter(p => p.category === category);
@@ -288,81 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
-// ========================= PRODUCT DETAIL PAGE =========================
-document.addEventListener('DOMContentLoaded', () => {
-    const productAddBtn = document.querySelector('#addToCartBtn');
-    
-    if(productAddBtn){
-        productAddBtn.addEventListener('click', () => {
-            const productEl = document.querySelector('.product-detail-main');
-            if(!productEl) return;
-
-            const name = productEl.dataset.name;
-            const price = parseFloat(productEl.dataset.price);
-            const img = productEl.dataset.img;
-            const desc = productEl.dataset.desc;
-            const qtyInput = document.querySelector('#productQty');
-            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-            if(qty < 1) {
-                alert('Inserisci una quantità valida');
-                return;
-            }
-
-            const existing = cartObj.cart.find(p => p.name === name);
-            if(existing) {
-                existing.qty += qty;
-            } else {
-                cartObj.cart.push({name, desc, price, img, qty});
-            }
-
-            cartObj.updateCart();
-            
-            const cartSidebar = document.getElementById('cartSidebar');
-            if(cartSidebar) {
-                cartSidebar.classList.add('active');
-            }
-            
-            productAddBtn.textContent = '✓ Aggiunto al carrello';
-            productAddBtn.style.background = '#27ae60';
-            
-            setTimeout(() => {
-                productAddBtn.textContent = 'Aggiungi al carrello';
-                productAddBtn.style.background = '';
-            }, 1500);
-        });
-    }
-});
-
-// ========================= SEARCH =========================
-document.addEventListener('DOMContentLoaded', () => {
-    const searchForm = document.getElementById('searchForm');
-    if(searchForm){
-        searchForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const searchInput = searchForm.querySelector('input[name="search"]');
-            const query = searchInput ? searchInput.value.trim() : '';
-            if(query){
-                sessionStorage.setItem('searchQuery', query.toLowerCase());
-                window.location.href = 'risultati.html';
-            } else {
-                window.location.href = 'notfound.html';
-            }
-        });
-    }
-});
-
-// ========================= LANGUAGE =========================
-document.addEventListener('DOMContentLoaded', () => {
-    const languageDropdown = document.getElementById('languageDropdown');
-    if(languageDropdown){
-        languageDropdown.addEventListener('change', e => {
-            console.log('Lingua:', e.target.value);
-        });
-    }
-});
-
-// ========================= FILTERS (PC GAMING PAGE) =========================
+// ==================== FILTERS (PC GAMING PAGE) ====================
 document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.filter-btn');
     
@@ -373,38 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const category = btn.dataset.category;
             
-            if(typeof window.filterProducts !== 'undefined') {
+            if (typeof window.filterProducts !== 'undefined') {
                 window.filterProducts(category);
             }
         });
     });
-});
-
-// ========================= HAMBURGER MENU (MOBILE) =========================
-document.addEventListener('DOMContentLoaded', () => {
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-    const searchLangCart = document.querySelector('.search-language-cart');
-    
-    if(hamburger) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            if(navMenu) {
-                navMenu.classList.toggle('active');
-            }
-            if(searchLangCart) {
-                searchLangCart.classList.toggle('active');
-            }
-        });
-
-        // Chiudi menu quando clicchi su un link
-        const navLinks = document.querySelectorAll('.nav-menu a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                if(navMenu) navMenu.classList.remove('active');
-                if(searchLangCart) searchLangCart.classList.remove('active');
-            });
-        });
-    }
 });
