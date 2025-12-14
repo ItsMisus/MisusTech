@@ -154,6 +154,184 @@ function performSearch(query) {
     window.location.href = 'risultati.html';
 }
 
+// ==================== CART SIDEBAR ====================
+function initCartSidebar() {
+    const cartBtn = document.getElementById('cartBtn');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartClose = document.getElementById('cartClose');
+    const closeCart = document.getElementById('closeCart');
+    
+    // Crea overlay per il carrello se non esiste
+    let cartOverlay = document.querySelector('.cart-overlay');
+    if (!cartOverlay) {
+        cartOverlay = document.createElement('div');
+        cartOverlay.className = 'cart-overlay';
+        cartOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        `;
+        document.body.appendChild(cartOverlay);
+    }
+
+    // Apri carrello
+    if (cartBtn && cartSidebar) {
+        cartBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cartSidebar.classList.add('active');
+            cartOverlay.style.opacity = '1';
+            cartOverlay.style.visibility = 'visible';
+        });
+    }
+
+    // Funzione per chiudere il carrello
+    function closeCartSidebar() {
+        if (cartSidebar) {
+            cartSidebar.classList.remove('active');
+            cartOverlay.style.opacity = '0';
+            cartOverlay.style.visibility = 'hidden';
+        }
+    }
+
+    // Chiudi con bottone X
+    if (cartClose) {
+        cartClose.addEventListener('click', closeCartSidebar);
+    }
+    
+    // Chiudi con bottone "Chiudi"
+    if (closeCart) {
+        closeCart.addEventListener('click', closeCartSidebar);
+    }
+    
+    // Chiudi clickando sull'overlay
+    if (cartOverlay) {
+        cartOverlay.addEventListener('click', closeCartSidebar);
+    }
+
+    // Chiudi clickando fuori dal carrello
+    document.addEventListener('click', (e) => {
+        if (cartSidebar && cartSidebar.classList.contains('active')) {
+            // Se il click NON è dentro il carrello e NON è il bottone carrello
+            if (!cartSidebar.contains(e.target) && !cartBtn.contains(e.target)) {
+                closeCartSidebar();
+            }
+        }
+    });
+
+    // Previeni la chiusura quando si clicca DENTRO il carrello
+    if (cartSidebar) {
+        cartSidebar.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+}
+
+// ==================== LANGUAGE SELECTOR ====================
+function initLanguageSelector() {
+    const languageSelector = document.querySelectorAll('.language-selector');
+    const footerLangSelect = document.getElementById('footerLangSelect');
+    
+    // Header language selector
+    languageSelector.forEach(selector => {
+        selector.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Aggiungi position relative al selector
+            selector.style.position = 'relative';
+            
+            // Crea dropdown se non esiste
+            let dropdown = selector.querySelector('.lang-dropdown');
+            if (!dropdown) {
+                dropdown = document.createElement('div');
+                dropdown.className = 'lang-dropdown';
+                dropdown.style.cssText = `
+                    position: absolute;
+                    top: calc(100% + 8px);
+                    right: 0;
+                    background: #1a1a1a;
+                    border: 1px solid #374151;
+                    border-radius: 8px;
+                    padding: 8px 0;
+                    min-width: 120px;
+                    width: 100%;
+                    z-index: 1000;
+                    display: none;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                `;
+                
+                dropdown.innerHTML = `
+                    <div class="lang-option" data-lang="it" style="padding: 8px 16px; cursor: pointer; color: #9ca3af; font-size: 14px; transition: all 0.2s;">Italiano</div>
+                    <div class="lang-option" data-lang="en" style="padding: 8px 16px; cursor: pointer; color: #9ca3af; font-size: 14px; transition: all 0.2s;">English</div>
+                `;
+                
+                selector.appendChild(dropdown);
+                
+                // Hover effects
+                dropdown.querySelectorAll('.lang-option').forEach(opt => {
+                    opt.addEventListener('mouseenter', () => {
+                        opt.style.background = '#374151';
+                        opt.style.color = '#ffffff';
+                    });
+                    opt.addEventListener('mouseleave', () => {
+                        opt.style.background = 'transparent';
+                        opt.style.color = '#9ca3af';
+                    });
+                    opt.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const lang = opt.dataset.lang;
+                        changeLanguage(lang);
+                        dropdown.style.display = 'none';
+                    });
+                });
+            }
+            
+            // Toggle dropdown
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        });
+    });
+    
+    // Footer language selector
+    if (footerLangSelect) {
+        footerLangSelect.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+    }
+    
+    // Chiudi dropdown quando si clicca fuori
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.lang-dropdown').forEach(dropdown => {
+            dropdown.style.display = 'none';
+        });
+    });
+}
+
+function changeLanguage(lang) {
+    localStorage.setItem('miraLanguage', lang);
+    
+    // Aggiorna il testo nel selector
+    const langText = document.querySelectorAll('.language-selector span');
+    langText.forEach(span => {
+        span.textContent = lang === 'it' ? 'Italiano' : 'English';
+    });
+    
+    // Aggiorna footer select
+    const footerSelect = document.getElementById('footerLangSelect');
+    if (footerSelect) {
+        footerSelect.value = lang;
+    }
+    
+    console.log('Language changed to:', lang);
+    // Qui potresti aggiungere la logica per cambiare effettivamente la lingua del sito
+}
+
 // ==================== PAGINA RISULTATI ====================
 if (window.location.pathname.includes('risultati.html')) {
     document.addEventListener('DOMContentLoaded', () => {
@@ -281,85 +459,6 @@ if (window.location.pathname.includes('risultati.html')) {
     });
 }
 
-// ==================== CART SIDEBAR ====================
-function initCartSidebar() {
-    const cartBtn = document.getElementById('cartBtn');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const cartClose = document.getElementById('cartClose');
-    const closeCart = document.getElementById('closeCart');
-    
-    // Crea overlay per il carrello se non esiste
-    let cartOverlay = document.querySelector('.cart-overlay');
-    if (!cartOverlay) {
-        cartOverlay = document.createElement('div');
-        cartOverlay.className = 'cart-overlay';
-        cartOverlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        `;
-        document.body.appendChild(cartOverlay);
-    }
-
-    // Apri carrello
-    if (cartBtn && cartSidebar) {
-        cartBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            cartSidebar.classList.add('active');
-            cartOverlay.style.opacity = '1';
-            cartOverlay.style.visibility = 'visible';
-        });
-    }
-
-    // Funzione per chiudere il carrello
-    function closeCartSidebar() {
-        if (cartSidebar) {
-            cartSidebar.classList.remove('active');
-            cartOverlay.style.opacity = '0';
-            cartOverlay.style.visibility = 'hidden';
-        }
-    }
-
-    // Chiudi con bottone X
-    if (cartClose) {
-        cartClose.addEventListener('click', closeCartSidebar);
-    }
-    
-    // Chiudi con bottone "Chiudi"
-    if (closeCart) {
-        closeCart.addEventListener('click', closeCartSidebar);
-    }
-    
-    // Chiudi clickando sull'overlay
-    if (cartOverlay) {
-        cartOverlay.addEventListener('click', closeCartSidebar);
-    }
-
-    // Chiudi clickando fuori dal carrello
-    document.addEventListener('click', (e) => {
-        if (cartSidebar && cartSidebar.classList.contains('active')) {
-            // Se il click NON è dentro il carrello e NON è il bottone carrello
-            if (!cartSidebar.contains(e.target) && !cartBtn.contains(e.target)) {
-                closeCartSidebar();
-            }
-        }
-    });
-
-    // Previeni la chiusura quando si clicca DENTRO il carrello
-    if (cartSidebar) {
-        cartSidebar.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-}
-
 // ==================== INIT ALL ====================
 document.addEventListener('DOMContentLoaded', () => {
     initCart();
@@ -389,6 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Carica lingua salvata
+    const savedLang = localStorage.getItem('miraLanguage') || 'it';
+    changeLanguage(savedLang);
+    
     console.log('MIRA: All systems initialized');
-    //script.js
 });

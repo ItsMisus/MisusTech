@@ -283,30 +283,45 @@ body {
         right: 16px;
     }
 }
-/* ==================== HERO SECTION ==================== */
+/* ==================== HERO SECTION - BANNER CELESTINO ==================== */
 .hero {
-    background: var(--gray-50);
-    padding: var(--space-20) 0;
-    text-align: center;
+    background: #ffffff;
+    padding: 0;
 }
 
-.hero-content {
-    max-width: 720px;
+.hero-banner-main {
+    width: 100%;
+    max-width: 1440px;
     margin: 0 auto;
+    height: 420px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 80px;
+    margin-bottom: 60px;
 }
 
-.hero h1 {
-    font-size: clamp(32px, 5vw, 56px);
+.hero-text-overlay {
+    text-align: right;
+    max-width: 600px;
+}
+
+.hero-text-overlay h1 {
+    font-size: 48px;
     font-weight: 700;
-    color: var(--black);
-    margin-bottom: var(--space-4);
+    color: #000000;
+    margin-bottom: 16px;
     letter-spacing: -1px;
+    line-height: 1.2;
 }
 
-.hero p {
+.hero-text-overlay p {
     font-size: 18px;
-    color: var(--gray-600);
-    margin-bottom: var(--space-8);
+    color: #4b5563;
+    margin-bottom: 32px;
+    line-height: 1.5;
 }
 
 .btn-hero {
@@ -314,21 +329,48 @@ body {
     align-items: center;
     justify-content: center;
     padding: 14px 32px;
-    background: var(--black);
-    color: var(--white);
+    background: #000000;
+    color: #ffffff;
     text-decoration: none;
-    border-radius: var(--radius-lg);
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 16px;
-    transition: var(--transition);
-    border: 2px solid var(--black);
+    font-size: 15px;
+    transition: all 0.2s;
 }
 
 .btn-hero:hover {
-    background: var(--white);
-    color: var(--black);
+    background: #1a1a1a;
+    transform: translateY(-2px);
 }
 
+@media (max-width: 1024px) {
+    .hero-banner-main {
+        height: 380px;
+        padding: 0 60px;
+        justify-content: center;
+    }
+    
+    .hero-text-overlay {
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-banner-main {
+        height: 320px;
+        padding: 40px 20px;
+        margin-bottom: 40px;
+    }
+    
+    .hero-text-overlay h1 {
+        font-size: 32px;
+    }
+    
+    .hero-text-overlay p {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+}
 /* ==================== PRODUCTS SECTION HOME ==================== */
 .products-section {
     padding: var(--space-20) 0;
@@ -340,7 +382,7 @@ body {
     font-weight: 700;
     color: var(--black);
     margin-bottom: var(--space-12);
-    text-align: left;
+    text-align: center;
 }
 
 .products-grid-home {
