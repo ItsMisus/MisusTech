@@ -2,15 +2,15 @@
 /**
  * MIRA E-Commerce API
  * Authentication Endpoint - api/auth.php
- * Gestisce login, registrazione e verifica token
+ * CON INVIO EMAIL BENVENUTO ✅
  */
 
 require_once 'config.php';
+require_once 'email_helper.php'; // ✅ AGGIUNTO
 
 $db = Database::getInstance()->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Gestisci solo POST requests
 if ($method !== 'POST') {
     Response::error('Solo richieste POST sono permesse', 405);
 }
@@ -23,7 +23,6 @@ if (!$data) {
 
 $action = $data['action'] ?? '';
 
-// Router per azioni
 switch ($action) {
     case 'register':
         registerUser($db, $data);
@@ -38,7 +37,6 @@ switch ($action) {
         break;
     
     case 'logout':
-        // JWT è stateless, logout gestito lato client
         Response::success(null, 'Logout effettuato con successo');
         break;
     
@@ -99,7 +97,7 @@ function registerUser($db, $data) {
             $data['first_name'],
             $data['last_name'],
             $data['phone'] ?? null,
-            0 // is_admin = false per nuovi utenti
+            0
         ]);
         
         $userId = $db->lastInsertId();
@@ -114,6 +112,21 @@ function registerUser($db, $data) {
         
         // Crea carrello per nuovo utente
         $db->prepare("INSERT INTO carts (user_id) VALUES (?)")->execute([$userId]);
+        
+        // ✅ INVIA EMAIL DI BENVENUTO
+        try {
+            $fullName = $data['first_name'] . ' ' . $data['last_name'];
+            $emailSent = EmailHelper::sendWelcomeEmail($data['email'], $fullName);
+            
+            if ($emailSent) {
+                error_log("✅ Email benvenuto inviata a: {$data['email']}");
+            } else {
+                error_log("⚠️ Email benvenuto non inviata (non critico)");
+            }
+        } catch (Exception $e) {
+            // Non bloccare la registrazione se l'email fallisce
+            error_log("⚠️ Errore invio email benvenuto: " . $e->getMessage());
+        }
         
         Response::success([
             'token' => $token,
@@ -166,7 +179,7 @@ function loginUser($db, $data) {
             'id' => $user['id'],
             'email' => $user['email'],
             'is_admin' => (bool)$user['is_admin'],
-            'exp' => time() + (86400 * 30) // 30 giorni
+            'exp' => time() + (86400 * 30)
         ]);
         
         // Verifica/crea carrello
