@@ -3,69 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - MIRA</title>
+    <title>MIRA Admin Panel</title>
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <!-- Admin Header -->
-    <header class="admin-header">
-        <div class="admin-nav-container">
-            <div class="admin-logo">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
-                </svg>
-                <span>MIRA Admin</span>
-            </div>
-            
-            <div class="admin-user-info">
-                <span id="adminUsername">Admin</span>
-                <button class="btn-logout" id="btnLogout">Esci</button>
-            </div>
-        </div>
-    </header>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon"></div>
+        <div class="toast-message"></div>
+    </div>
 
-    <!-- Admin Container -->
-    <div class="admin-container">
+    <!-- Admin Layout -->
+    <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h1>MIRA</h1>
+                <p>Admin Panel</p>
+            </div>
+            
             <nav class="admin-nav">
                 <a href="#" class="admin-nav-link active" data-section="products">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
                     </svg>
                     <span>Prodotti</span>
                 </a>
                 
-                <a href="#" class="admin-nav-link" data-section="categories">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
-                    </svg>
-                    <span>Categorie & Tags</span>
-                </a>
-                
                 <a href="#" class="admin-nav-link" data-section="orders">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
                     </svg>
                     <span>Ordini</span>
                 </a>
                 
-                <a href="#" class="admin-nav-link" data-section="messages">
+                <a href="#" class="admin-nav-link" data-section="users">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
                     </svg>
-                    <span>Messaggi</span>
+                    <span>Utenti</span>
                 </a>
             </nav>
             
-            <div class="admin-sidebar-footer">
-                <a href="index.html" class="btn-view-site">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            <div class="admin-user">
+                <div class="admin-user-info">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
                     </svg>
-                    Vai al sito
-                </a>
+                    <div>
+                        <p id="adminUsername">Admin</p>
+                        <small>Amministratore</small>
+                    </div>
+                </div>
+                <button id="btnLogout" class="btn-logout" title="Logout">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                        <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                    </svg>
+                </button>
             </div>
         </aside>
 
@@ -75,10 +71,10 @@
             <section id="productsSection" class="admin-section active">
                 <div class="section-header">
                     <div>
-                        <h1>Gestione Prodotti</h1>
-                        <p class="section-subtitle">Aggiungi, modifica o rimuovi prodotti dal catalogo</p>
+                        <h2>Gestione Prodotti</h2>
+                        <p>Gestisci il catalogo prodotti MIRA</p>
                     </div>
-                    <button class="btn-primary" id="btnAddProduct">
+                    <button id="btnAddProduct" class="btn-primary">
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                         </svg>
@@ -92,42 +88,42 @@
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                         </svg>
-                        <input type="text" placeholder="Cerca prodotti..." id="searchProducts">
+                        <input type="text" id="searchProducts" placeholder="Cerca prodotti...">
                     </div>
                     
                     <select id="filterCategory" class="filter-select">
                         <option value="">Tutte le categorie</option>
-                        <!-- Popolato dinamicamente -->
                     </select>
                     
                     <select id="filterStatus" class="filter-select">
                         <option value="">Tutti gli stati</option>
-                        <option value="1">Attivo</option>
-                        <option value="0">Disattivato</option>
+                        <option value="1">Attivi</option>
+                        <option value="0">Inattivi</option>
                     </select>
                 </div>
 
                 <!-- Products Table -->
                 <div class="table-container">
-                    <table class="admin-table">
+                    <table class="data-table">
                         <thead>
                             <tr>
-                                <th style="width: 60px;">
+                                <th width="50">
                                     <input type="checkbox" id="selectAll">
                                 </th>
-                                <th style="width: 80px;">Immagine</th>
+                                <th width="80">Immagine</th>
                                 <th>Nome</th>
                                 <th>Categoria</th>
-                                <th style="width: 100px;">Prezzo</th>
-                                <th style="width: 80px;">Stock</th>
-                                <th style="width: 100px;">Stato</th>
-                                <th style="width: 120px;">Azioni</th>
+                                <th>Prezzo</th>
+                                <th>Stock</th>
+                                <th>Stato</th>
+                                <th width="120">Azioni</th>
                             </tr>
                         </thead>
                         <tbody id="productsTableBody">
                             <tr>
-                                <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
-                                    Caricamento prodotti...
+                                <td colspan="8" style="text-align: center; padding: 40px;">
+                                    <div class="spinner"></div>
+                                    <p style="margin-top: 15px; color: #666;">Caricamento prodotti...</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -135,198 +131,123 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="table-pagination">
+                <div class="pagination">
                     <div class="pagination-info">
-                        Mostra <span id="paginationInfo">0-0 di 0</span> prodotti
+                        Mostrando <span id="paginationInfo">0-0 di 0</span> prodotti
                     </div>
-                    <div class="pagination-controls" id="paginationControls">
-                        <!-- Popolato dinamicamente -->
-                    </div>
+                    <div id="paginationControls" class="pagination-controls"></div>
                 </div>
-            </section>
-
-            <!-- Categories Section -->
-            <section id="categoriesSection" class="admin-section">
-                <div class="section-header">
-                    <h1>Categorie & Tags</h1>
-                </div>
-                <p style="padding: 40px; color: #6b7280; text-align: center;">Sezione in sviluppo...</p>
             </section>
 
             <!-- Orders Section -->
             <section id="ordersSection" class="admin-section">
                 <div class="section-header">
-                    <h1>Ordini</h1>
+                    <h2>Gestione Ordini</h2>
                 </div>
-                <p style="padding: 40px; color: #6b7280; text-align: center;">Sezione in sviluppo...</p>
+                <div style="padding: 40px; text-align: center; color: #666;">
+                    <p>Sezione in sviluppo</p>
+                </div>
             </section>
 
-            <!-- Messages Section -->
-            <section id="messagesSection" class="admin-section">
+            <!-- Users Section -->
+            <section id="usersSection" class="admin-section">
                 <div class="section-header">
-                    <h1>Messaggi di Contatto</h1>
+                    <h2>Gestione Utenti</h2>
                 </div>
-                <p style="padding: 40px; color: #6b7280; text-align: center;">Sezione in sviluppo...</p>
+                <div style="padding: 40px; text-align: center; color: #666;">
+                    <p>Sezione in sviluppo</p>
+                </div>
             </section>
         </main>
     </div>
 
     <!-- Product Modal -->
-    <div class="modal-overlay" id="productModal">
+    <div id="productModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Nuovo Prodotto</h2>
-                <button class="modal-close" id="closeModal">
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                    </svg>
-                </button>
+                <h3 id="modalTitle">Nuovo Prodotto</h3>
+                <button class="modal-close">×</button>
             </div>
             
-            <form id="productForm" class="modal-body">
-                <input type="hidden" id="productId">
-                
+            <form id="productForm">
                 <div class="form-grid">
-                    <!-- Nome Prodotto -->
                     <div class="form-group full-width">
                         <label for="productName">Nome Prodotto *</label>
                         <input type="text" id="productName" required>
                     </div>
-
-                    <!-- Descrizione -->
+                    
                     <div class="form-group full-width">
                         <label for="productDescription">Descrizione *</label>
                         <textarea id="productDescription" rows="4" required></textarea>
                     </div>
-
-                    <!-- Categoria -->
-                    <div class="form-group">
-                        <label for="productCategory">Categoria *</label>
-                        <select id="productCategory" required>
-                            <option value="">Seleziona categoria</option>
-                            <!-- Popolato dinamicamente -->
-                        </select>
-                    </div>
-
-                    <!-- Tags -->
-                    <div class="form-group">
-                        <label for="productTags">Tags</label>
-                        <select id="productTags" multiple>
-                            <!-- Popolato dinamicamente -->
-                        </select>
-                        <small>Tieni premuto Ctrl (Cmd su Mac) per selezionare più tag</small>
-                    </div>
-
-                    <!-- Prezzo -->
+                    
                     <div class="form-group">
                         <label for="productPrice">Prezzo (€) *</label>
                         <input type="number" id="productPrice" step="0.01" min="0" required>
                     </div>
-
-                    <!-- Prezzo Scontato -->
+                    
                     <div class="form-group">
                         <label for="productDiscountPrice">Prezzo Scontato (€)</label>
                         <input type="number" id="productDiscountPrice" step="0.01" min="0">
                     </div>
-
-                    <!-- Stock -->
+                    
                     <div class="form-group">
                         <label for="productStock">Stock *</label>
-                        <input type="number" id="productStock" min="0" required>
+                        <input type="number" id="productStock" min="0" value="0" required>
                     </div>
-
-                    <!-- URL Immagine -->
+                    
                     <div class="form-group">
-                        <label for="productImage">URL Immagine *</label>
-                        <input type="url" id="productImage" placeholder="https://..." required>
+                        <label for="productCategory">Categoria</label>
+                        <select id="productCategory">
+                            <option value="">-- Seleziona --</option>
+                        </select>
                     </div>
-
-                    <!-- Checkboxes -->
+                    
                     <div class="form-group full-width">
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="productIsDiscount">
-                                <span>Applica sconto</span>
-                            </label>
-                            
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="productIsFeatured">
-                                <span>Prodotto in evidenza</span>
-                            </label>
-                            
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="productIsActive" checked>
-                                <span>Prodotto attivo</span>
-                            </label>
-                        </div>
+                        <label for="productImage">URL Immagine *</label>
+                        <input type="url" id="productImage" required>
                     </div>
-
-                    <!-- Specifiche Tecniche -->
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="productIsDiscount">
+                            <span>In Sconto</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="productIsFeatured">
+                            <span>In Evidenza</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="productIsActive" checked>
+                            <span>Attivo</span>
+                        </label>
+                    </div>
+                    
                     <div class="form-group full-width">
                         <label>Specifiche Tecniche</label>
-                        <div id="specsContainer">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Chiave (es: CPU)" class="spec-key">
-                                <input type="text" placeholder="Valore (es: Intel i7)" class="spec-value">
-                                <button type="button" class="btn-remove-spec">
-                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-secondary" id="btnAddSpec">
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                            Aggiungi Specifica
+                        <div id="specsContainer"></div>
+                        <button type="button" id="btnAddSpec" class="btn-secondary" style="margin-top: 10px;">
+                            + Aggiungi Specifica
                         </button>
                     </div>
                 </div>
-
-                <!-- Form Actions -->
+                
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary" id="btnCancelProduct">Annulla</button>
-                    <button type="submit" class="btn-primary" id="btnSaveProduct">Salva Prodotto</button>
+                    <button type="button" id="btnCancelProduct" class="btn-secondary">Annulla</button>
+                    <button type="submit" class="btn-primary">Salva Prodotto</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal-overlay" id="deleteModal">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h2>Conferma Eliminazione</h2>
-                <button class="modal-close" id="closeDeleteModal">
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="modal-body">
-                <p id="deleteMessage">Sei sicuro di voler eliminare questo prodotto?</p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="btnCancelDelete">Annulla</button>
-                <button type="button" class="btn-danger" id="btnConfirmDelete">Elimina</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <div class="toast-content">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="toast-icon">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-            </svg>
-            <span class="toast-message">Operazione completata</span>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script src="js/api.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>

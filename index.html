@@ -73,18 +73,76 @@
             </div>
         </div>
     </section>
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay"></div>
 
-    <!-- NOVITÀ SECTION -->
+<!-- CART SIDEBAR - Stile NZXT -->
+<div class="cart-sidebar" id="cartSidebar">
+    <!-- Header -->
+    <div class="cart-header">
+        <h3>Carrello</h3>
+        <button class="cart-close" id="cartClose">✕</button>
+    </div>
+    
+    <!-- Free Shipping Banner -->
+    <div class="cart-free-shipping">
+        <p>Hai diritto alla spedizione gratuita!</p>
+    </div>
+    
+    <!-- Cart Items -->
+    <div class="cart-content" id="cartContent">
+        <p class="cart-empty">Il tuo carrello è vuoto</p>
+    </div>
+    
+    <!-- Footer con Checkout -->
+    <div class="cart-footer">
+        <div class="cart-subtotal">
+            <span class="cart-subtotal-label">Totale</span>
+            <span class="cart-subtotal-value">€0.00</span>
+        </div>
+        <button class="cart-checkout-btn" onclick="window.location.href='checkout.html'">
+            <span>Checkout</span>
+            <span>•</span>
+            <span class="cart-subtotal-value">€0.00</span>
+        </button>
+    </div>
+</div>
+
+<!-- AGGIUNGI QUESTI SCRIPT PRIMA DELLA CHIUSURA </body> -->
+<link rel="stylesheet" href="css/cart.css">
+<script src="js/cart.js"></script>
+
+<!-- CSS AGGIUNTIVO PER IL BADGE -->
+<style>
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #000;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+}
+</style>
+    <!-- NOVITÀ SECTION (NUOVA) -->
     <section class="products-section">
         <div class="container">
             <h2 class="section-title">Novità</h2>
             
-            <div class="products-grid-home" id="homeProductsGrid">
-                <!-- Prodotti caricati dinamicamente da product.js -->
+            <!-- Container per i prodotti novità -->
+            <div id="novitaContainer" class="products-grid-home">
+                <!-- I prodotti verranno caricati automaticamente da novita.js -->
             </div>
 
             <div class="view-all-container">
-                <a href="pcgaming.html" class="btn-view-all">View all</a>
+                <a href="pcgaming.html?category=novita" class="btn-view-all">View all</a>
             </div>
         </div>
     </section>
@@ -149,7 +207,7 @@
                   <h4>Supporto Clienti</h4>
                     <ul>
                         <li><a href="contattaci.html">Contattaci & FAQ</a></li>
-                        <li><a href="mailto:preventivimira1@.com">preventivimira1@.com</a></li>
+                        <li><a href="mailto:preventivimira1@gmail.com">preventivimira1@gmail.com</a></li>
                         <li><a href=>+39 377 590 0298</a></li>
                         <li><a href="auth.html">Il tuo Account</a></li>
                     </ul>
@@ -230,8 +288,9 @@
     </div>
 
     <!-- Scripts nell'ORDINE CORRETTO -->
-<script src="js/api.js"></script>
-<script src="js/script.js"></script>
-<script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/novita.js"></script>
 </body>
 </html>
