@@ -1,5 +1,6 @@
 /**
  * MIRA E-Commerce - Product Pages con Integrazione Carrello
+ * FIX #13: filtri catalogo usano sia tags che category_slug per matching robusto
  */
 
 const PRODUCTS_API = 'http://localhost/mira_ecommerce/api/products.php';
@@ -10,13 +11,11 @@ let currentProduct = null;
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
-    
+
     if (path.includes('product.html')) {
         initProductDetailPage();
     } else if (path.includes('pcgaming.html')) {
         initPCGamingPage();
-    } else if (path.includes('index.html') || path === '/') {
-        // Homepage - gestita da novita.js
     }
 });
 
@@ -26,24 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initProductDetailPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
-    
+
     if (!productId) {
         window.location.href = 'notfound.html';
         return;
     }
-    
+
     try {
         const response = await fetch(`${PRODUCTS_API}?id=${productId}`);
-        const data = await response.json();
-        
+        const data     = await response.json();
+
         if (!data.success || !data.data) {
             window.location.href = 'notfound.html';
             return;
         }
-        
+
         currentProduct = data.data;
         renderProductDetail(currentProduct);
-        
+
     } catch (error) {
         console.error('Errore caricamento prodotto:', error);
         window.location.href = 'notfound.html';
@@ -56,9 +55,9 @@ async function initProductDetailPage() {
 function renderProductDetail(product) {
     const container = document.querySelector('.product-detail');
     if (!container) return;
-    
+
     const finalPrice = product.is_discount ? product.discount_price : product.price;
-    
+
     container.innerHTML = `
         <div class="product-detail-container">
             <div class="product-detail-images">
@@ -66,10 +65,10 @@ function renderProductDetail(product) {
                     <img src="${product.image_url}" alt="${product.name}">
                 </div>
             </div>
-            
+
             <div class="product-detail-info">
                 <h1>${product.name}</h1>
-                
+
                 <div class="product-rating-detail">
                     ${renderStars(product.avg_rating)}
                     <span class="rating-text">
@@ -77,24 +76,23 @@ function renderProductDetail(product) {
                         ${product.review_count > 0 ? `(${product.review_count})` : ''}
                     </span>
                 </div>
-                
+
                 <p class="product-detail-desc">${product.description}</p>
-                
+
                 ${renderSpecs(product.specs)}
-                
+
                 <div class="product-detail-price">
-                    ${product.is_discount ? `
-                        <span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
-                        <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                    ` : `
-                        <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                    `}
+                    ${product.is_discount
+                        ? `<span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
+                           <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                        : `<span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                    }
                 </div>
-                
+
                 <button class="btn-add-to-cart-detail" onclick="handleAddToCart(${product.id})">
                     Aggiungi al carrello
                 </button>
-                
+
                 <a href="pcgaming.html" class="btn-back">← Torna ai prodotti</a>
             </div>
         </div>
@@ -105,22 +103,18 @@ function renderProductDetail(product) {
 // RENDER SPECIFICHE
 // ============================================================================
 function renderSpecs(specs) {
-    if (!specs || Object.keys(specs).length === 0) {
-        return '';
-    }
-    
+    if (!specs || Object.keys(specs).length === 0) return '';
+
     const specsHTML = Object.entries(specs).map(([key, value]) => `
         <div class="spec-item">
             <strong>${key.toUpperCase()}:</strong> ${value}
         </div>
     `).join('');
-    
+
     return `
         <div class="product-options">
             <h3>Specifiche Tecniche</h3>
-            <div class="specs-list">
-                ${specsHTML}
-            </div>
+            <div class="specs-list">${specsHTML}</div>
         </div>
     `;
 }
@@ -141,37 +135,30 @@ function renderStars(rating) {
 // ============================================================================
 async function handleAddToCart(productId) {
     const button = document.querySelector('.btn-add-to-cart-detail');
-    
     if (!button) return;
-    
-    // Disabilita bottone
-    button.disabled = true;
-    button.textContent = 'Aggiunta in corso...';
-    
+
+    button.disabled     = true;
+    button.textContent  = 'Aggiunta in corso...';
+
     try {
-        // Usa la funzione globale addToCart da cart.js
         await window.addToCart(productId, 1);
-        
-        // Feedback successo
-        button.textContent = '✓ Aggiunto al carrello';
+        button.textContent      = '✓ Aggiunto al carrello';
         button.style.background = '#10b981';
-        
+
         setTimeout(() => {
-            button.disabled = false;
-            button.textContent = 'Aggiungi al carrello';
+            button.disabled         = false;
+            button.textContent      = 'Aggiungi al carrello';
             button.style.background = '';
         }, 2000);
-        
+
     } catch (error) {
         console.error('Errore aggiunta al carrello:', error);
-        
-        // Feedback errore
-        button.textContent = '✗ Errore';
+        button.textContent      = '✗ Errore';
         button.style.background = '#ef4444';
-        
+
         setTimeout(() => {
-            button.disabled = false;
-            button.textContent = 'Aggiungi al carrello';
+            button.disabled         = false;
+            button.textContent      = 'Aggiungi al carrello';
             button.style.background = '';
         }, 2000);
     }
@@ -179,69 +166,59 @@ async function handleAddToCart(productId) {
 
 // ============================================================================
 // PAGINA PC GAMING (CATALOGO)
+// FIX #13: setupFilters() controlla sia tags che category_slug e category_name
 // ============================================================================
 async function initPCGamingPage() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
-    
-    let allProducts = [];
+
+    let allProducts      = [];
     let filteredProducts = [];
-    let currentPage = 1;
+    let currentPage      = 1;
     const PRODUCTS_PER_PAGE = 9;
-    
-    // Carica prodotti
+
     try {
         const response = await fetch(`${PRODUCTS_API}?limit=100`);
-        const data = await response.json();
-        
+        const data     = await response.json();
+
         if (data.success && data.data && data.data.products) {
-            allProducts = data.data.products;
+            allProducts      = data.data.products;
             filteredProducts = [...allProducts];
-            
             renderProductsGrid(1);
             updatePagination();
-            
-            // Setup filtri
             setupFilters();
             setupSort();
         }
     } catch (error) {
         console.error('Errore caricamento prodotti:', error);
     }
-    
+
     // ========== RENDER GRID ==========
     function renderProductsGrid(page) {
-        const start = (page - 1) * PRODUCTS_PER_PAGE;
-        const end = start + PRODUCTS_PER_PAGE;
-        const pageProducts = filteredProducts.slice(start, end);
-        
+        const start      = (page - 1) * PRODUCTS_PER_PAGE;
+        const pageProducts = filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
+
         productsGrid.innerHTML = '';
-        
+
         if (pageProducts.length === 0) {
             productsGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:40px;">Nessun prodotto trovato</p>';
             return;
         }
-        
-        pageProducts.forEach(product => {
-            const card = createProductCard(product);
-            productsGrid.appendChild(card);
-        });
-        
-        // Update count
+
+        pageProducts.forEach(product => productsGrid.appendChild(createProductCard(product)));
+
         const countEl = document.getElementById('productsCount');
-        if (countEl) {
-            countEl.textContent = `${filteredProducts.length} prodotti`;
-        }
+        if (countEl) countEl.textContent = `${filteredProducts.length} prodotti`;
     }
-    
+
     // ========== CREATE CARD ==========
     function createProductCard(product) {
-        const card = document.createElement('div');
-        card.className = 'product-card';
+        const card       = document.createElement('div');
+        card.className   = 'product-card';
         card.style.cursor = 'pointer';
-        
+
         const finalPrice = product.is_discount ? product.discount_price : product.price;
-        
+
         card.innerHTML = `
             ${product.is_discount ? '<span class="discount-badge">OFFERTA</span>' : ''}
             <div class="product-image">
@@ -249,140 +226,148 @@ async function initPCGamingPage() {
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
-                <p class="product-desc">${product.description.substring(0, 80)}...</p>
+                <p class="product-desc">${(product.description || '').substring(0, 80)}...</p>
                 <div class="product-rating">
                     ${renderStars(product.avg_rating)}
                     <span class="rating-count">(${product.review_count})</span>
                 </div>
                 <div class="product-price">
-                    ${product.is_discount ? `
-                        <span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
-                        <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                    ` : `
-                        <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                    `}
+                    ${product.is_discount
+                        ? `<span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
+                           <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                        : `<span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                    }
                 </div>
             </div>
         `;
-        
-        // Click → pagina prodotto
+
         card.addEventListener('click', () => {
             window.location.href = `product.html?id=${product.id}`;
         });
-        
+
         return card;
     }
-    
+
     // ========== PAGINATION ==========
     function updatePagination() {
         const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-        const container = document.querySelector('.pagination-modern');
-        
+        const container  = document.querySelector('.pagination-modern');
+
         if (!container || totalPages <= 1) {
             if (container) container.innerHTML = '';
             return;
         }
-        
+
         container.innerHTML = '';
-        
-        // Prev
+
         const prev = document.createElement('button');
         prev.className = 'pagination-arrow';
         prev.innerHTML = '←';
-        prev.disabled = currentPage === 1;
-        prev.onclick = () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderProductsGrid(currentPage);
-                updatePagination();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        };
+        prev.disabled  = currentPage === 1;
+        prev.onclick   = () => { if (currentPage > 1) { currentPage--; renderProductsGrid(currentPage); updatePagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
         container.appendChild(prev);
-        
-        // Pages
+
         for (let i = 1; i <= totalPages; i++) {
             const btn = document.createElement('button');
             btn.className = `page-number ${i === currentPage ? 'active' : ''}`;
             btn.textContent = i;
-            btn.onclick = () => {
-                currentPage = i;
-                renderProductsGrid(currentPage);
-                updatePagination();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            };
+            btn.onclick = () => { currentPage = i; renderProductsGrid(currentPage); updatePagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
             container.appendChild(btn);
         }
-        
-        // Next
+
         const next = document.createElement('button');
         next.className = 'pagination-arrow';
         next.innerHTML = '→';
-        next.disabled = currentPage === totalPages;
-        next.onclick = () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderProductsGrid(currentPage);
-                updatePagination();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        };
+        next.disabled  = currentPage === totalPages;
+        next.onclick   = () => { if (currentPage < totalPages) { currentPage++; renderProductsGrid(currentPage); updatePagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
         container.appendChild(next);
     }
-    
+
     // ========== FILTRI ==========
+    /**
+     * FIX #13: productMatchesCategory() controlla:
+     *  1) p.tags.includes(category)          — slug nei tag
+     *  2) p.category_slug === category       — slug della categoria
+     *  3) p.category_name (lowercase) === category — nome categoria normalizzato
+     *
+     * Questo copre tutti i casi di mismatch tra data-category dell'HTML e slugs del DB.
+     */
+    function productMatchesCategory(product, category) {
+        if (category === 'all') return true;
+
+        const catLower = category.toLowerCase();
+
+        // Controlla tags
+        if (Array.isArray(product.tags) && product.tags.some(t => t.toLowerCase() === catLower)) {
+            return true;
+        }
+
+        // Controlla category_slug
+        if ((product.category_slug || '').toLowerCase() === catLower) {
+            return true;
+        }
+
+        // Controlla category_name normalizzato (rimuove spazi, accenti semplici)
+        const normalizedName = (product.category_name || '')
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[àá]/g, 'a')
+            .replace(/[èé]/g, 'e')
+            .replace(/[ìí]/g, 'i')
+            .replace(/[òó]/g, 'o')
+            .replace(/[ùú]/g, 'u');
+
+        if (normalizedName === catLower) return true;
+
+        return false;
+    }
+
     function setupFilters() {
         document.querySelectorAll('.filter-category').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-category').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 const category = btn.dataset.category;
-                
-                if (category === 'all') {
-                    filteredProducts = [...allProducts];
-                } else {
-                    filteredProducts = allProducts.filter(p => {
-                        if (!p.tags) return false;
-                        return p.tags.includes(category);
-                    });
-                }
-                
+
+                // FIX #13: usa productMatchesCategory() invece di p.tags.includes()
+                filteredProducts = category === 'all'
+                    ? [...allProducts]
+                    : allProducts.filter(p => productMatchesCategory(p, category));
+
                 currentPage = 1;
                 renderProductsGrid(1);
                 updatePagination();
             });
         });
     }
-    
+
     // ========== ORDINAMENTO ==========
     function setupSort() {
         const sortSelect = document.getElementById('sortSelect');
         if (!sortSelect) return;
-        
+
         sortSelect.addEventListener('change', (e) => {
-            const value = e.target.value;
-            
-            switch (value) {
+            switch (e.target.value) {
                 case 'price-asc':
                     filteredProducts.sort((a, b) => {
-                        const priceA = a.is_discount ? a.discount_price : a.price;
-                        const priceB = b.is_discount ? b.discount_price : b.price;
-                        return priceA - priceB;
+                        const pA = a.is_discount ? a.discount_price : a.price;
+                        const pB = b.is_discount ? b.discount_price : b.price;
+                        return pA - pB;
                     });
                     break;
                 case 'price-desc':
                     filteredProducts.sort((a, b) => {
-                        const priceA = a.is_discount ? a.discount_price : a.price;
-                        const priceB = b.is_discount ? b.discount_price : b.price;
-                        return priceB - priceA;
+                        const pA = a.is_discount ? a.discount_price : a.price;
+                        const pB = b.is_discount ? b.discount_price : b.price;
+                        return pB - pA;
                     });
                     break;
                 case 'name':
-                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'it'));
                     break;
             }
-            
+
             renderProductsGrid(currentPage);
         });
     }

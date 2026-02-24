@@ -1,6 +1,6 @@
 /**
  * MIRA E-Commerce Frontend API Client
- * Gestisce tutte le chiamate al backend
+ * FIX #10: sincronizzazione carrello eseguita una sola volta con _cartSyncDone flag
  */
 
 const API_BASE_URL = 'http://localhost/mira_ecommerce/api';
@@ -9,27 +9,20 @@ const API_BASE_URL = 'http://localhost/mira_ecommerce/api';
 class MiraAPI {
     constructor(baseURL = API_BASE_URL) {
         this.baseURL = baseURL;
-        this.token = localStorage.getItem('miraToken');
+        this.token   = localStorage.getItem('miraToken');
     }
 
     async request(endpoint, options = {}) {
-        const url = `${this.baseURL}/${endpoint}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            ...options.headers
-        };
+        const url     = `${this.baseURL}/${endpoint}`;
+        const headers = { 'Content-Type': 'application/json', ...options.headers };
 
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
 
         try {
-            const response = await fetch(url, {
-                ...options,
-                headers
-            });
-
-            const data = await response.json();
+            const response = await fetch(url, { ...options, headers });
+            const data     = await response.json();
 
             if (!response.ok) {
                 throw new Error(data.message || 'Errore nella richiesta');
@@ -43,7 +36,7 @@ class MiraAPI {
     }
 
     // ==================== PRODUCTS ====================
-    
+
     async getProducts(filters = {}) {
         const params = new URLSearchParams(filters);
         return this.request(`products.php?${params}`);
@@ -62,7 +55,7 @@ class MiraAPI {
     }
 
     // ==================== REVIEWS ====================
-    
+
     async getReviews(productId) {
         return this.request(`reviews.php?product_id=${productId}`);
     }
@@ -70,15 +63,12 @@ class MiraAPI {
     async submitReview(productId, data) {
         return this.request('reviews.php', {
             method: 'POST',
-            body: JSON.stringify({
-                product_id: productId,
-                ...data
-            })
+            body: JSON.stringify({ product_id: productId, ...data })
         });
     }
 
     // ==================== CART ====================
-    
+
     async getCart() {
         return this.request('cart.php');
     }
@@ -98,19 +88,15 @@ class MiraAPI {
     }
 
     async removeFromCart(itemId) {
-        return this.request(`cart.php?id=${itemId}`, {
-            method: 'DELETE'
-        });
+        return this.request(`cart.php?id=${itemId}`, { method: 'DELETE' });
     }
 
     async clearCart() {
-        return this.request('cart.php?clear=1', {
-            method: 'DELETE'
-        });
+        return this.request('cart.php?clear=1', { method: 'DELETE' });
     }
 
     // ==================== ORDERS ====================
-    
+
     async createOrder(orderData) {
         return this.request('orders.php', {
             method: 'POST',
@@ -118,28 +104,23 @@ class MiraAPI {
         });
     }
 
-    async getOrders() {
-        return this.request('orders.php');
-    }
-
-    async getOrder(orderId) {
-        return this.request(`orders.php?id=${orderId}`);
-    }
+    async getOrders() { return this.request('orders.php'); }
+    async getOrder(orderId) { return this.request(`orders.php?id=${orderId}`); }
 
     // ==================== AUTH ====================
-    
+
     async login(email, password) {
         const response = await this.request('auth.php', {
             method: 'POST',
             body: JSON.stringify({ action: 'login', email, password })
         });
-        
+
         if (response.success && response.data.token) {
             this.token = response.data.token;
             localStorage.setItem('miraToken', this.token);
             localStorage.setItem('miraUser', JSON.stringify(response.data.user));
         }
-        
+
         return response;
     }
 
@@ -148,13 +129,13 @@ class MiraAPI {
             method: 'POST',
             body: JSON.stringify({ action: 'register', ...userData })
         });
-        
+
         if (response.success && response.data.token) {
             this.token = response.data.token;
             localStorage.setItem('miraToken', this.token);
             localStorage.setItem('miraUser', JSON.stringify(response.data.user));
         }
-        
+
         return response;
     }
 
@@ -164,9 +145,7 @@ class MiraAPI {
         localStorage.removeItem('miraUser');
     }
 
-    isAuthenticated() {
-        return !!this.token;
-    }
+    isAuthenticated() { return !!this.token; }
 
     getCurrentUser() {
         const user = localStorage.getItem('miraUser');
@@ -174,7 +153,7 @@ class MiraAPI {
     }
 
     // ==================== CONTACT ====================
-    
+
     async sendContactMessage(data) {
         return this.request('contact.php', {
             method: 'POST',
@@ -193,9 +172,8 @@ if (typeof window !== 'undefined') {
 // ==================== HELPER FUNCTIONS ====================
 
 function createProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-
+    const card      = document.createElement('div');
+    card.className  = 'product-card';
     const finalPrice = product.is_discount ? product.discount_price : product.price;
     const hasDiscount = product.is_discount && product.discount_price < product.price;
 
@@ -206,22 +184,21 @@ function createProductCard(product) {
         </div>
         <div class="product-info">
             <h3>${product.name}</h3>
-            <p class="product-desc">${product.description.substring(0, 80)}...</p>
+            <p class="product-desc">${(product.description || '').substring(0, 80)}...</p>
             <div class="product-rating">
                 <div class="stars">
-                    ${[1, 2, 3, 4, 5].map(star => 
-                        `<span class="star ${star <= Math.round(product.avg_rating) ? 'filled' : ''}">★</span>`
+                    ${[1,2,3,4,5].map(s =>
+                        `<span class="star ${s <= Math.round(product.avg_rating) ? 'filled' : ''}">★</span>`
                     ).join('')}
                 </div>
                 <span class="rating-count">(${product.review_count})</span>
             </div>
             <div class="product-price">
-                ${hasDiscount ? `
-                    <span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
-                    <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                ` : `
-                    <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>
-                `}
+                ${hasDiscount
+                    ? `<span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
+                       <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                    : `<span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                }
             </div>
         </div>
     `;
@@ -236,176 +213,129 @@ function createProductCard(product) {
 // ==================== AUTO-INITIALIZE ====================
 document.addEventListener('DOMContentLoaded', () => {
     initializeHeader();
+
+    // FIX #10: usa un flag globale per garantire che la sync avvenga
+    // una sola volta per sessione, anche se più script la invocano
+    const token = localStorage.getItem('miraToken');
+    if (token && !window._cartSyncDone) {
+        window._cartSyncDone = true;
+        setTimeout(syncCartWithServer, 500);
+    }
+
+    // Intercetta operazioni carrello dopo che cart.js è pronto
+    setTimeout(interceptCartOperations, 1000);
 });
 
 function initializeHeader() {
-    // Update account button based on auth status
     const accountBtn = document.getElementById('accountBtn');
-    if (accountBtn) {
-        const user = api.getCurrentUser();
-        
-        if (user) {
-            // User is logged in - highlight button
-            accountBtn.style.borderColor = '#9b59b6';
-            const svg = accountBtn.querySelector('svg');
-            if (svg) {
-                svg.style.fill = '#9b59b6';
-            }
-            accountBtn.title = 'Il mio Account';
-        } else {
-            accountBtn.title = 'Accedi / Registrati';
-        }
-        
-        // Navigate to auth page
-        accountBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            window.location.href = 'auth.html';
-        });
+    if (!accountBtn) return;
+
+    // Evita duplicazione con script.js (usa stesso flag)
+    if (accountBtn._miraInitialized) return;
+    accountBtn._miraInitialized = true;
+
+    const user = api.getCurrentUser();
+
+    if (user) {
+        accountBtn.style.borderColor = '#9b59b6';
+        const svg = accountBtn.querySelector('svg');
+        if (svg) svg.style.fill = '#9b59b6';
+        accountBtn.title = 'Il mio Account';
+    } else {
+        accountBtn.title = 'Accedi / Registrati';
     }
+
+    accountBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = 'auth.html';
+    });
 }
 
 // ==================== CART SYNCHRONIZATION ====================
-
+// FIX #10: questa funzione viene chiamata una sola volta grazie al flag window._cartSyncDone
 async function syncCartWithServer() {
     const token = localStorage.getItem('miraToken');
     if (!token) return;
 
     try {
-        // Get local cart
         const localCart = JSON.parse(localStorage.getItem('miraCart') || '[]');
-        
+
         if (localCart.length > 0) {
-            // Sync local cart to server
             console.log('🔄 Sincronizzazione carrello locale → server...');
-            
             for (const item of localCart) {
                 try {
                     await api.addToCart(item.id, item.qty);
                 } catch (error) {
-                    console.error('❌ Errore sincronizzazione item:', item.id, error);
+                    console.error('❌ Errore sync item:', item.id, error);
                 }
             }
-            
+            // Svuota il localStorage dopo la sync per evitare ri-sincronizzazioni
+            localStorage.removeItem('miraCart');
             console.log('✅ Carrello sincronizzato con il server');
         } else {
-            // Load server cart if local is empty
             const serverCart = await api.getCart();
-            
             if (serverCart.success && serverCart.data.items && serverCart.data.items.length > 0) {
                 console.log('📥 Caricamento carrello dal server...');
-                
-                // Convert server cart format to local format
                 const converted = serverCart.data.items.map(item => ({
-                    id: item.product_id,
-                    name: item.product_name,
+                    id:    item.product_id,
+                    name:  item.product_name,
                     price: item.unit_price,
-                    img: item.image_url,
-                    qty: item.quantity,
-                    desc: ''
+                    img:   item.image_url,
+                    qty:   item.quantity,
+                    desc:  ''
                 }));
-                
                 localStorage.setItem('miraCart', JSON.stringify(converted));
-                console.log('✅ Carrello caricato dal server');
             }
         }
-        
-        // Update cart display
-        if (window.cartObj && window.cartObj.updateCart) {
+
+        // Aggiorna display carrello
+        if (typeof window.loadCart === 'function') {
+            window.loadCart();
+        } else if (window.cartObj && window.cartObj.updateCart) {
             window.cartObj.updateCart();
         }
-        
+
     } catch (error) {
         console.error('❌ Errore sincronizzazione carrello:', error);
     }
 }
 
-// Auto-sync cart on page load if user is authenticated
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('miraToken');
-    if (token) {
-        setTimeout(syncCartWithServer, 500);
-    }
-});
-
 // ==================== INTERCEPT CART OPERATIONS ====================
-
 function interceptCartOperations() {
-    // Store original functions
-    const originalSaveCart = window.cartObj?.saveCart;
-    
-    if (window.cartObj) {
-        // Override saveCart to also sync with server
-        window.cartObj.saveCart = function() {
-            // First save locally
-            if (originalSaveCart) {
-                originalSaveCart.call(this);
-            }
-            
-            // Then sync with server if authenticated
-            const token = localStorage.getItem('miraToken');
-            if (token) {
-                syncCartWithServer().catch(err => {
-                    console.error('Errore sincronizzazione automatica:', err);
-                });
-            }
-        };
-    }
-}
+    if (!window.cartObj) return;
 
-// Initialize interceptors after cart is ready
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(interceptCartOperations, 1000);
-});
+    const originalSaveCart = window.cartObj.saveCart;
+
+    window.cartObj.saveCart = function() {
+        if (originalSaveCart) originalSaveCart.call(this);
+
+        const token = localStorage.getItem('miraToken');
+        if (token && !window._cartSyncDone) {
+            window._cartSyncDone = true;
+            syncCartWithServer().catch(err => {
+                console.error('Errore sincronizzazione automatica:', err);
+            });
+        }
+    };
+}
 
 // ==================== CART HELPER FUNCTIONS ====================
 
 window.updateCartQuantity = async (itemId, quantity) => {
     try {
-        // Update locally first
         if (window.cartObj && window.cartObj.cart) {
             const item = window.cartObj.cart.find(i => i.id === itemId);
-            if (item) {
-                item.qty = quantity;
-                window.cartObj.saveCart();
-                window.cartObj.updateCart();
-            }
+            if (item) { item.qty = quantity; window.cartObj.saveCart(); window.cartObj.updateCart(); }
         }
-        
-        // Then sync with server if authenticated
         const token = localStorage.getItem('miraToken');
-        if (token) {
-            await api.updateCartItem(itemId, quantity);
-        }
+        if (token) await api.updateCartItem(itemId, quantity);
     } catch (error) {
         console.error('Error updating cart:', error);
     }
 };
 
-window.removeFromCart = async (itemId) => {
-    try {
-        // Remove locally first
-        if (window.cartObj && window.cartObj.cart) {
-            const index = window.cartObj.cart.findIndex(i => i.id === itemId);
-            if (index !== -1) {
-                window.cartObj.cart.splice(index, 1);
-                window.cartObj.saveCart();
-                window.cartObj.updateCart();
-            }
-        }
-        
-        // Then sync with server if authenticated
-        const token = localStorage.getItem('miraToken');
-        if (token) {
-            await api.removeFromCart(itemId);
-        }
-    } catch (error) {
-        console.error('Error removing from cart:', error);
-    }
-};
-
 // ==================== MODULE EXPORT ====================
-
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MiraAPI, api, createProductCard, syncCartWithServer };
 }

@@ -1,4 +1,6 @@
 // ==================== CART MANAGEMENT ====================
+// FIX #9: cartObj è mantenuto per retrocompatibilità ma NON gestisce più
+// il carrello in modo autonomo. Il sistema autorevole è cart.js (server-side).
 let cartObj = {
     cart: [],
     updateCart: function() {},
@@ -6,38 +8,32 @@ let cartObj = {
 };
 
 function initCart() {
+    // Leggi dal localStorage solo per retrocompatibilità con codice vecchio
     let cart = JSON.parse(localStorage.getItem('miraCart')) || [];
-    
+
     function saveCart() {
         localStorage.setItem('miraCart', JSON.stringify(cart));
-        
-        // Sync with server if authenticated
-        const token = localStorage.getItem('miraToken');
-        if (token && window.MiraAPI) {
-            syncCartWithServer().catch(err => {
-                console.error('Errore sincronizzazione carrello:', err);
-            });
-        }
+        // NON chiama più syncCartWithServer() — lo fa già api.js
     }
-    
-    function updateCart() {
-        const cartItems = document.getElementById('cartItems');
-        const cartTotalEl = document.getElementById('cartTotal');
-        const cartContent = document.getElementById('cartContent');
-        
-        if (!cartItems && !cartContent) return;
 
-        const container = cartItems || cartContent;
-        container.innerHTML = "";
-        
+    function updateCart() {
+        const cartItems   = document.getElementById('cartItems');
+        const cartContent = document.getElementById('cartContent');
+
+        // Se esiste #cartContent, cart.js sta gestendo il carrello → non interferire
+        if (cartContent) return;
+
+        if (!cartItems) return;
+
+        cartItems.innerHTML = '';
+
         if (cart.length === 0) {
-            container.innerHTML = "<p style='text-align:center; color:#aaa; padding:20px;'>Il carrello è vuoto</p>";
-            if (cartTotalEl) cartTotalEl.textContent = '0.00';
+            cartItems.innerHTML = "<p style='text-align:center; color:#aaa; padding:20px;'>Il carrello è vuoto</p>";
         } else {
             cart.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.style.cssText = 'display:flex; gap:10px; margin-bottom:15px; background:#222; padding:10px; border-radius:8px; align-items:flex-start;';
-                
+
                 div.innerHTML = `
                     <img src="${item.img}" alt="${item.name}" style="width:80px; height:60px; object-fit:cover; border-radius:6px;">
                     <div style="flex:1;">
@@ -51,30 +47,15 @@ function initCart() {
                         </div>
                     </div>
                 `;
-                
-                container.appendChild(div);
 
-                div.querySelector('.increase').addEventListener('click', () => {
-                    item.qty += 1;
-                    saveCart();
-                    updateCart();
-                });
-                
-                div.querySelector('.decrease').addEventListener('click', () => {
-                    if (item.qty > 1) {
-                        item.qty -= 1;
-                        saveCart();
-                        updateCart();
-                    }
-                });
-                
-                div.querySelector('.remove').addEventListener('click', () => {
-                    cart.splice(index, 1);
-                    saveCart();
-                    updateCart();
-                });
+                cartItems.appendChild(div);
+
+                div.querySelector('.increase').addEventListener('click', () => { item.qty += 1; saveCart(); updateCart(); });
+                div.querySelector('.decrease').addEventListener('click', () => { if (item.qty > 1) { item.qty -= 1; saveCart(); updateCart(); } });
+                div.querySelector('.remove').addEventListener('click',   () => { cart.splice(index, 1); saveCart(); updateCart(); });
             });
-            
+
+            const cartTotalEl = document.getElementById('cartTotal');
             const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
             if (cartTotalEl) cartTotalEl.textContent = total.toFixed(2);
         }
@@ -85,37 +66,13 @@ function initCart() {
     return cartObj;
 }
 
-// ==================== SYNC CART WITH SERVER ====================
-async function syncCartWithServer() {
-    const token = localStorage.getItem('miraToken');
-    if (!token || !window.MiraAPI) return;
-
-    try {
-        const localCart = JSON.parse(localStorage.getItem('miraCart') || '[]');
-        
-        if (localCart.length > 0) {
-            // Sync local to server
-            for (const item of localCart) {
-                try {
-                    await window.MiraAPI.addToCart(item.id, item.qty);
-                } catch (error) {
-                    console.error('Error syncing item:', item.id, error);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error syncing cart:', error);
-    }
-}
-
 // ==================== SEARCH FUNCTIONALITY ====================
 function initSearch() {
-    const searchBtn = document.getElementById('searchBtn');
+    const searchBtn     = document.getElementById('searchBtn');
     const searchOverlay = document.getElementById('searchOverlay');
-    const searchClose = document.getElementById('searchClose');
+    const searchClose   = document.getElementById('searchClose');
     const mainSearchInput = document.getElementById('mainSearchInput');
 
-    // Aggiungi SVG al bottone close se non esiste
     if (searchClose && !searchClose.querySelector('svg')) {
         searchClose.innerHTML = `
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -130,9 +87,7 @@ function initSearch() {
             e.preventDefault();
             e.stopPropagation();
             searchOverlay.classList.add('active');
-            setTimeout(() => {
-                if (mainSearchInput) mainSearchInput.focus();
-            }, 100);
+            setTimeout(() => { if (mainSearchInput) mainSearchInput.focus(); }, 100);
         });
     }
 
@@ -156,64 +111,61 @@ function initSearch() {
         mainSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = mainSearchInput.value.trim();
-                if (query) {
-                    performSearch(query);
-                }
+                if (query) performSearch(query);
             }
         });
     }
 }
 
-function performSearch(query) {
+// FIX #8: performSearch ora chiama l'API reale invece di leggere da localStorage
+async function performSearch(query) {
     if (!query) return;
-    
-    const products = JSON.parse(localStorage.getItem('miraProducts')) || [];
-    const searchQuery = query.toLowerCase();
-    
-    const results = products.filter(product => {
-        const nameMatch = product.name.toLowerCase().includes(searchQuery);
-        const descMatch = product.desc.toLowerCase().includes(searchQuery);
-        const tagsMatch = product.tags && product.tags.some(tag => tag.toLowerCase().includes(searchQuery));
-        const specsMatch = product.specs && Object.values(product.specs).some(spec => 
-            spec.toLowerCase().includes(searchQuery)
-        );
-        
-        return nameMatch || descMatch || tagsMatch || specsMatch;
-    });
-    
-    sessionStorage.setItem('searchQuery', query);
-    sessionStorage.setItem('searchResults', JSON.stringify(results));
-    window.location.href = 'risultati.html';
+
+    try {
+        const API_BASE = 'http://localhost/mira_ecommerce/api';
+        const response = await fetch(`${API_BASE}/products.php?search=${encodeURIComponent(query)}&limit=100`);
+        const data = await response.json();
+
+        const results = (data.success && data.data && data.data.products) ? data.data.products : [];
+
+        sessionStorage.setItem('searchQuery',   query);
+        sessionStorage.setItem('searchResults', JSON.stringify(results));
+        window.location.href = 'risultati.html';
+
+    } catch (error) {
+        console.error('Errore ricerca:', error);
+        // Fallback: vai comunque alla pagina risultati con array vuoto
+        sessionStorage.setItem('searchQuery',   query);
+        sessionStorage.setItem('searchResults', JSON.stringify([]));
+        window.location.href = 'risultati.html';
+    }
 }
 
 // ==================== CART SIDEBAR ====================
+// FIX #9: initCartSidebar() non registra più listener se cart.js è già attivo
+// (cart.js monta i propri listener su #cartBtn, #cartClose, #cartOverlay)
 function initCartSidebar() {
-    const cartBtn = document.getElementById('cartBtn');
+    // Se cart.js è caricato, gestisce già tutto → uscire
+    if (typeof window.openCart === 'function') return;
+
+    const cartBtn     = document.getElementById('cartBtn');
     const cartSidebar = document.getElementById('cartSidebar');
-    const cartClose = document.getElementById('cartClose');
-    const closeCart = document.getElementById('closeCart');
-    
-    // Crea overlay per il carrello se non esiste
+    const cartClose   = document.getElementById('cartClose');
+    const closeCart   = document.getElementById('closeCart');
+
     let cartOverlay = document.querySelector('.cart-overlay');
     if (!cartOverlay) {
         cartOverlay = document.createElement('div');
         cartOverlay.className = 'cart-overlay';
         cartOverlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1999;
+            opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         `;
         document.body.appendChild(cartOverlay);
     }
 
-    // Apri carrello
     if (cartBtn && cartSidebar) {
         cartBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -223,7 +175,6 @@ function initCartSidebar() {
         });
     }
 
-    // Funzione per chiudere il carrello
     function closeCartSidebar() {
         if (cartSidebar) {
             cartSidebar.classList.remove('active');
@@ -232,36 +183,20 @@ function initCartSidebar() {
         }
     }
 
-    // Chiudi con bottone X
-    if (cartClose) {
-        cartClose.addEventListener('click', closeCartSidebar);
-    }
-    
-    // Chiudi con bottone "Chiudi"
-    if (closeCart) {
-        closeCart.addEventListener('click', closeCartSidebar);
-    }
-    
-    // Chiudi clickando sull'overlay
-    if (cartOverlay) {
-        cartOverlay.addEventListener('click', closeCartSidebar);
-    }
+    if (cartClose)   cartClose.addEventListener('click',   closeCartSidebar);
+    if (closeCart)   closeCart.addEventListener('click',   closeCartSidebar);
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCartSidebar);
 
-    // Chiudi clickando fuori dal carrello
     document.addEventListener('click', (e) => {
         if (cartSidebar && cartSidebar.classList.contains('active')) {
-            // Se il click NON è dentro il carrello e NON è il bottone carrello
-            if (!cartSidebar.contains(e.target) && !cartBtn.contains(e.target)) {
+            if (!cartSidebar.contains(e.target) && cartBtn && !cartBtn.contains(e.target)) {
                 closeCartSidebar();
             }
         }
     });
 
-    // Previeni la chiusura quando si clicca DENTRO il carrello
     if (cartSidebar) {
-        cartSidebar.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        cartSidebar.addEventListener('click', (e) => e.stopPropagation());
     }
 }
 
@@ -269,124 +204,82 @@ function initCartSidebar() {
 function initLanguageSelector() {
     const languageSelector = document.querySelectorAll('.language-selector');
     const footerLangSelect = document.getElementById('footerLangSelect');
-    
-    // Header language selector
+
     languageSelector.forEach(selector => {
         selector.addEventListener('click', (e) => {
             e.stopPropagation();
-            
-            // Aggiungi position relative al selector
             selector.style.position = 'relative';
-            
-            // Crea dropdown se non esiste
+
             let dropdown = selector.querySelector('.lang-dropdown');
             if (!dropdown) {
                 dropdown = document.createElement('div');
                 dropdown.className = 'lang-dropdown';
                 dropdown.style.cssText = `
-                    position: absolute;
-                    top: calc(100% + 8px);
-                    right: 0;
-                    background: #1a1a1a;
-                    border: 1px solid #374151;
-                    border-radius: 8px;
-                    padding: 8px 0;
-                    min-width: 120px;
-                    width: 100%;
-                    z-index: 1000;
-                    display: none;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    position: absolute; top: calc(100% + 8px); right: 0;
+                    background: #1a1a1a; border: 1px solid #374151; border-radius: 8px;
+                    padding: 8px 0; min-width: 120px; width: 100%; z-index: 1000;
+                    display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                 `;
-                
                 dropdown.innerHTML = `
-                    <div class="lang-option" data-lang="it" style="padding: 8px 16px; cursor: pointer; color: #9ca3af; font-size: 14px; transition: all 0.2s;">Italiano</div>
-                    <div class="lang-option" data-lang="en" style="padding: 8px 16px; cursor: pointer; color: #9ca3af; font-size: 14px; transition: all 0.2s;">English</div>
+                    <div class="lang-option" data-lang="it" style="padding:8px 16px;cursor:pointer;color:#9ca3af;font-size:14px;transition:all 0.2s;">Italiano</div>
+                    <div class="lang-option" data-lang="en" style="padding:8px 16px;cursor:pointer;color:#9ca3af;font-size:14px;transition:all 0.2s;">English</div>
                 `;
-                
                 selector.appendChild(dropdown);
-                
-                // Hover effects
+
                 dropdown.querySelectorAll('.lang-option').forEach(opt => {
-                    opt.addEventListener('mouseenter', () => {
-                        opt.style.background = '#374151';
-                        opt.style.color = '#ffffff';
-                    });
-                    opt.addEventListener('mouseleave', () => {
-                        opt.style.background = 'transparent';
-                        opt.style.color = '#9ca3af';
-                    });
+                    opt.addEventListener('mouseenter', () => { opt.style.background = '#374151'; opt.style.color = '#fff'; });
+                    opt.addEventListener('mouseleave', () => { opt.style.background = 'transparent'; opt.style.color = '#9ca3af'; });
                     opt.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const lang = opt.dataset.lang;
-                        changeLanguage(lang);
+                        changeLanguage(opt.dataset.lang);
                         dropdown.style.display = 'none';
                     });
                 });
             }
-            
-            // Toggle dropdown
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
+
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
         });
     });
-    
-    // Footer language selector
+
     if (footerLangSelect) {
-        footerLangSelect.addEventListener('change', (e) => {
-            changeLanguage(e.target.value);
-        });
+        footerLangSelect.addEventListener('change', (e) => changeLanguage(e.target.value));
     }
-    
-    // Chiudi dropdown quando si clicca fuori
+
     document.addEventListener('click', () => {
-        document.querySelectorAll('.lang-dropdown').forEach(dropdown => {
-            dropdown.style.display = 'none';
-        });
+        document.querySelectorAll('.lang-dropdown').forEach(d => d.style.display = 'none');
     });
 }
 
 function changeLanguage(lang) {
     localStorage.setItem('miraLanguage', lang);
-    
-    // Aggiorna il testo nel selector
-    const langText = document.querySelectorAll('.language-selector span');
-    langText.forEach(span => {
+    document.querySelectorAll('.language-selector span').forEach(span => {
         span.textContent = lang === 'it' ? 'Italiano' : 'English';
     });
-    
-    // Aggiorna footer select
     const footerSelect = document.getElementById('footerLangSelect');
-    if (footerSelect) {
-        footerSelect.value = lang;
-    }
-    
-    console.log('Language changed to:', lang);
-    // Qui potresti aggiungere la logica per cambiare effettivamente la lingua del sito
+    if (footerSelect) footerSelect.value = lang;
 }
 
 // ==================== ACCOUNT BUTTON ====================
 function initAccountButton() {
     const accountBtn = document.getElementById('accountBtn');
     if (!accountBtn) return;
-    
-    // Check if user is logged in
+
+    // api.js (initializeHeader) gestisce già questo → evita duplicati
+    if (accountBtn._miraInitialized) return;
+    accountBtn._miraInitialized = true;
+
     const token = localStorage.getItem('miraToken');
-    const user = localStorage.getItem('miraUser');
-    
+    const user  = localStorage.getItem('miraUser');
+
     if (token && user) {
-        // User is logged in - highlight button
         accountBtn.style.borderColor = '#9b59b6';
         const svg = accountBtn.querySelector('svg');
-        if (svg) {
-            svg.style.fill = '#9b59b6';
-        }
+        if (svg) svg.style.fill = '#9b59b6';
         accountBtn.title = 'Il mio Account';
     } else {
-        // User is not logged in
         accountBtn.title = 'Accedi / Registrati';
     }
-    
-    // Navigate to auth page
+
     accountBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -398,69 +291,62 @@ function initAccountButton() {
 if (window.location.pathname.includes('risultati.html')) {
     document.addEventListener('DOMContentLoaded', () => {
         const resultsContainer = document.getElementById('productsContainer');
-        
+
         if (resultsContainer) {
-            const searchQuery = sessionStorage.getItem('searchQuery') || '';
+            const searchQuery   = sessionStorage.getItem('searchQuery') || '';
             const searchResults = JSON.parse(sessionStorage.getItem('searchResults') || '[]');
 
             if (!searchQuery || searchResults.length === 0) {
-                window.location.href = 'notfound.html';
+                // Mostra messaggio invece di redirect immediato
+                resultsContainer.innerHTML = `<p style="text-align:center;color:#999;padding:40px;">Nessun risultato trovato per "<strong>${searchQuery}</strong>"</p>`;
+                const pageTitle = document.querySelector('.page-title, h1');
+                if (pageTitle) pageTitle.textContent = `Risultati per "${searchQuery}"`;
                 return;
             }
 
             const pageTitle = document.querySelector('.page-title, h1');
-            if (pageTitle) {
-                pageTitle.textContent = `Risultati per "${searchQuery}"`;
-            }
+            if (pageTitle) pageTitle.textContent = `Risultati per "${searchQuery}"`;
 
             const RESULTS_PER_PAGE = 9;
             let currentPage = 1;
 
             function displayResults(page) {
-                const start = (page - 1) * RESULTS_PER_PAGE;
-                const end = start + RESULTS_PER_PAGE;
-                const pageResults = searchResults.slice(start, end);
+                const start       = (page - 1) * RESULTS_PER_PAGE;
+                const pageResults = searchResults.slice(start, start + RESULTS_PER_PAGE);
 
                 resultsContainer.innerHTML = '';
 
                 pageResults.forEach(product => {
-                    const avgRating = getAverageRating(product.id);
-                    const reviewCount = getReviewCount(product.id);
-                    const finalPrice = product.discount ? product.discountPrice : product.price;
+                    const finalPrice = product.is_discount ? product.discount_price : product.price;
+                    const avgRating  = product.avg_rating || 0;
+                    const reviewCount = product.review_count || 0;
 
                     const card = document.createElement('div');
                     card.className = 'product-card';
                     card.innerHTML = `
-                        ${product.discount ? '<span class="discount-badge">OFFERTA</span>' : ''}
+                        ${product.is_discount ? '<span class="discount-badge">OFFERTA</span>' : ''}
                         <div class="product-image">
-                            <img src="${product.img}" alt="${product.name}">
+                            <img src="${product.image_url}" alt="${product.name}">
                         </div>
                         <div class="product-info">
                             <h3>${product.name}</h3>
-                            <p class="product-desc">${product.desc}</p>
+                            <p class="product-desc">${(product.description || '').substring(0, 80)}...</p>
                             <div class="product-rating">
                                 <div class="stars">
-                                    ${[1, 2, 3, 4, 5].map(star => 
-                                        `<span class="star ${star <= Math.round(avgRating) ? 'filled' : ''}">★</span>`
-                                    ).join('')}
+                                    ${[1,2,3,4,5].map(s => `<span class="star ${s <= Math.round(avgRating) ? 'filled' : ''}">★</span>`).join('')}
                                 </div>
                                 <span class="rating-count">(${reviewCount})</span>
                             </div>
                             <div class="product-price">
-                                ${product.discount ? `
-                                    <span class="original-price">€${product.price.toFixed(2)}</span>
-                                    <span class="current-price">€${product.discountPrice.toFixed(2)}</span>
-                                ` : `
-                                    <span class="current-price">€${product.price.toFixed(2)}</span>
-                                `}
+                                ${product.is_discount
+                                    ? `<span class="original-price">€${parseFloat(product.price).toFixed(2)}</span>
+                                       <span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                                    : `<span class="current-price">€${parseFloat(finalPrice).toFixed(2)}</span>`
+                                }
                             </div>
                         </div>
                     `;
-
-                    card.addEventListener('click', () => {
-                        window.location.href = `product.html?id=${product.id}`;
-                    });
-
+                    card.addEventListener('click', () => { window.location.href = `product.html?id=${product.id}`; });
                     resultsContainer.appendChild(card);
                 });
 
@@ -468,7 +354,7 @@ if (window.location.pathname.includes('risultati.html')) {
             }
 
             function updatePagination(page) {
-                let paginationDiv = document.querySelector('.pagination');
+                let paginationDiv = document.querySelector('.pagination-modern');
                 if (!paginationDiv) {
                     paginationDiv = document.createElement('div');
                     paginationDiv.className = 'pagination-modern';
@@ -477,7 +363,6 @@ if (window.location.pathname.includes('risultati.html')) {
 
                 const totalPages = Math.ceil(searchResults.length / RESULTS_PER_PAGE);
                 paginationDiv.innerHTML = '';
-
                 if (totalPages <= 1) return;
 
                 const prevBtn = document.createElement('button');
@@ -488,11 +373,11 @@ if (window.location.pathname.includes('risultati.html')) {
                 paginationDiv.appendChild(prevBtn);
 
                 for (let i = 1; i <= totalPages; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `page-number ${i === page ? 'active' : ''}`;
-                    pageBtn.textContent = i;
-                    pageBtn.addEventListener('click', () => displayResults(i));
-                    paginationDiv.appendChild(pageBtn);
+                    const btn = document.createElement('button');
+                    btn.className = `page-number ${i === page ? 'active' : ''}`;
+                    btn.textContent = i;
+                    btn.addEventListener('click', () => displayResults(i));
+                    paginationDiv.appendChild(btn);
                 }
 
                 const nextBtn = document.createElement('button');
@@ -501,19 +386,6 @@ if (window.location.pathname.includes('risultati.html')) {
                 nextBtn.disabled = page === totalPages;
                 nextBtn.addEventListener('click', () => displayResults(page + 1));
                 paginationDiv.appendChild(nextBtn);
-            }
-
-            function getAverageRating(productId) {
-                const reviews = JSON.parse(localStorage.getItem('miraReviews') || '{}');
-                const productReviews = reviews[productId] || [];
-                if (productReviews.length === 0) return 0;
-                const sum = productReviews.reduce((acc, review) => acc + review.rating, 0);
-                return sum / productReviews.length;
-            }
-
-            function getReviewCount(productId) {
-                const reviews = JSON.parse(localStorage.getItem('miraReviews') || '{}');
-                return (reviews[productId] || []).length;
             }
 
             displayResults(1);
@@ -528,42 +400,29 @@ document.addEventListener('DOMContentLoaded', () => {
     initLanguageSelector();
     initCartSidebar();
     initAccountButton();
-    
-    // Search inline nella pagina 404
+
+    // Search nella pagina 404
     const searchInputNotFound = document.getElementById('searchInputNotFound');
-    const searchBtnNotFound = document.getElementById('searchBtnNotFound');
-    
+    const searchBtnNotFound   = document.getElementById('searchBtnNotFound');
+
     if (searchBtnNotFound && searchInputNotFound) {
         searchBtnNotFound.addEventListener('click', () => {
             const query = searchInputNotFound.value.trim();
-            if (query) {
-                performSearch(query);
-            }
+            if (query) performSearch(query);
         });
-        
         searchInputNotFound.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = searchInputNotFound.value.trim();
-                if (query) {
-                    performSearch(query);
-                }
+                if (query) performSearch(query);
             }
         });
     }
-    
-    // Carica lingua salvata
+
     const savedLang = localStorage.getItem('miraLanguage') || 'it';
     changeLanguage(savedLang);
-    
-    // Sync cart with server if authenticated
-    const token = localStorage.getItem('miraToken');
-    if (token) {
-        setTimeout(() => {
-            syncCartWithServer().catch(err => {
-                console.error('Errore sincronizzazione iniziale carrello:', err);
-            });
-        }, 500);
-    }
-    
+
+    // FIX #10: syncCartWithServer viene chiamato solo da api.js.
+    // script.js NON chiama più syncCartWithServer() per evitare la race condition.
+
     console.log('MIRA: All systems initialized');
 });
